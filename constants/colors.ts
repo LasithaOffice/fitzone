@@ -1,0 +1,10 @@
+export const BACKGROUND_COLOR = "#070709";
+export const COMP_BACKGROUND_COLOR = "#0d0d0f";
+export const COMP_BACKGROUND_COLOR_SELECTED = "#11234e55";
+export const COMP_BORDER_COLOR = "#232325";
+export const COMP_BORDER_COLOR_SELECTED = "#2f5dcc";
+export const ICON_COLOR = "#545455";
+export const PRIMARY = "#98c70a";
+export const SECONDARY = "#006184";
+export const TEXT_PRIMARY = "#ffffff";
+export const TEXT_BUTTON = "#000000";
