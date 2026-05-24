@@ -54,7 +54,7 @@ const JoinScreen1 = () => {
       step={0}
     >
       <View className='items-center mt-5'>
-        <ProfileImage />
+        <ProfileImage width={96} height={96} />
         <Text className='mt-3'>{"Welcome!"} </Text>
         <Text variant={'small'} className='text-center text-gray-300 px-10'>{"You're in. Let's set up your profile."}</Text>
         <View className='w-full items-start mt-10'>

@@ -34,7 +34,37 @@ export default function RootLayout() {
     <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}>
       <KeyboardProvider>
         <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-        <Stack screenOptions={{ headerShown: false, }} />
+        <Stack screenOptions={{ headerShown: false, }} initialRouteName='index' >
+          <Stack.Screen name="auth/login"
+            options={{
+              presentation: "modal",
+              animation: "slide_from_bottom",
+              gestureEnabled: true,
+            }}
+          />
+          <Stack.Screen name="auth/join1"
+            options={{
+              presentation: "modal",
+              animation: "slide_from_bottom",
+              gestureEnabled: true,
+            }}
+          />
+          <Stack.Screen name="auth/join2"
+            options={{
+              presentation: "modal",
+              animation: "slide_from_bottom",
+              gestureEnabled: true,
+            }}
+          />
+          <Stack.Screen name="auth/join3"
+            options={{
+              presentation: "modal",
+              animation: "slide_from_bottom",
+              gestureEnabled: true,
+            }}
+          />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
         <PortalHost />
       </KeyboardProvider>
     </ThemeProvider>

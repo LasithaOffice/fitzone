@@ -73,10 +73,14 @@ const JoinScreen3 = () => {
   const [selectedFitnessLevel, setSelectedFitnessLevel] = useState<Levels>(fitnessLevels[0]);
   const [selectedGoal, setSelectedGoal] = useState<Levels>(goals[0]);
 
+  const continueProcess = () => {
+    router.replace("/main/home")
+  }
+
   return (
     <RegistrationWrapper
       mainTitle={"Last step!"}
-      onPress={() => { }}
+      onPress={continueProcess}
       onBack={() => {
         router.back();
       }}
