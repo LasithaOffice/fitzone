@@ -1,4 +1,4 @@
-import { View } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import ProfileImage from '@/components/features/ProfileImage'
@@ -14,11 +14,17 @@ const Home = () => {
   return (
     <SafeAreaView className='bg-black flex-1'>
       <Header />
-      <WeeklyUpdate />
-      <MainMenu />
-      <ProgressOverview />
-      <TodayPlan />
-      <GymNetwork />
+      <ScrollView
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
+        <WeeklyUpdate />
+        <MainMenu />
+        <ProgressOverview />
+        <TodayPlan />
+        <GymNetwork />
+      </ScrollView>
     </SafeAreaView>
   )
 }
