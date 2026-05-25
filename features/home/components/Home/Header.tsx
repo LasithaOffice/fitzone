@@ -9,7 +9,7 @@ import * as Haptics from 'expo-haptics'
 const Header = () => {
   const navigateToProfile = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
-    router.push('/main/profile')
+    router.push('/(tabs)/profile')
   }
 
   return (

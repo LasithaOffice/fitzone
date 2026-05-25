@@ -35,34 +35,6 @@ export default function RootLayout() {
       <KeyboardProvider>
         <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
         <Stack screenOptions={{ headerShown: false, }} initialRouteName='index' >
-          <Stack.Screen name="auth/login"
-            options={{
-              presentation: "modal",
-              animation: "slide_from_bottom",
-              gestureEnabled: true,
-            }}
-          />
-          <Stack.Screen name="auth/join1"
-            options={{
-              presentation: "modal",
-              animation: "slide_from_bottom",
-              gestureEnabled: true,
-            }}
-          />
-          <Stack.Screen name="auth/join2"
-            options={{
-              presentation: "modal",
-              animation: "slide_from_bottom",
-              gestureEnabled: true,
-            }}
-          />
-          <Stack.Screen name="auth/join3"
-            options={{
-              presentation: "modal",
-              animation: "slide_from_bottom",
-              gestureEnabled: true,
-            }}
-          />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
         <PortalHost />

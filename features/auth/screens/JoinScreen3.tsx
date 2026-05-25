@@ -74,7 +74,7 @@ const JoinScreen3 = () => {
   const [selectedGoal, setSelectedGoal] = useState<Levels>(goals[0]);
 
   const continueProcess = () => {
-    router.replace("/main/home")
+    router.replace("/(tabs)")
   }
 
   return (
