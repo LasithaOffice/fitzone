@@ -1,17 +1,30 @@
-import { View } from 'react-native'
+import { View, TouchableOpacity } from 'react-native'
 import React from 'react'
 import ProfileImage from '@/components/features/ProfileImage'
 import { Text } from '@/components/ui/text'
 import NotificationButton from './NotificationButton'
+import { router } from 'expo-router'
+import * as Haptics from 'expo-haptics'
 
 const Header = () => {
+  const navigateToProfile = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+    router.push('/main/profile')
+  }
+
   return (
     <View className='flex-row p-3 gap-3 items-center'>
-      <ProfileImage width={40} height={40} />
-      <View className='flex-1'>
-        <Text className='font-bold'>Hello, Alex! 👋</Text>
-        <Text className='text-gray-300 text-[10px]'>Let's crush your goals today.</Text>
-      </View>
+      <TouchableOpacity 
+        className='flex-row flex-1 gap-3 items-center' 
+        onPress={navigateToProfile}
+        activeOpacity={0.7}
+      >
+        <ProfileImage width={40} height={40} />
+        <View className='flex-1'>
+          <Text className='font-bold text-white'>Hello, Alex! 👋</Text>
+          <Text className='text-gray-300 text-[10px]'>Let's crush your goals today.</Text>
+        </View>
+      </TouchableOpacity>
       <NotificationButton />
     </View>
   )
