@@ -57,10 +57,10 @@ const JoinScreen1 = () => {
         <ProfileImage width={96} height={96} />
         <Text className='mt-3'>{"Welcome!"} </Text>
         <Text variant={'small'} className='text-center text-gray-300 px-10'>{"You're in. Let's set up your profile."}</Text>
-        <View className='w-full items-start mt-10'>
+        <View className='w-full items-start mt-6'>
           <Text className='text-center text-gray-300 text-sm'>{"Full name"}</Text>
-          <Input className='mt-2' textContentType="name" autoComplete="name" placeholder="Enter your full name" />
-          <Text className='text-center text-gray-300 mt-8 text-sm'>{"Birthday"}</Text>
+          <Input className='mt-21' textContentType="name" autoComplete="name" placeholder="Enter your full name" />
+          <Text className='text-center text-gray-300 mt-4 text-sm'>{"Birthday"}</Text>
           <Button onPress={() => {
             setShow(true)
           }} variant={'outline'} className='mt-2 w-full items-center justify-start'>
@@ -75,7 +75,7 @@ const JoinScreen1 = () => {
               onChange={onChange}
             />
           )}
-          <Text className='text-center text-gray-300 mt-8 text-sm'>{"Gender"}</Text>
+          <Text className='text-center text-gray-300 mt-4 text-sm'>{"Gender"}</Text>
           <ToggleGroup className='mt-2' value={value} onValueChange={onValueChange} variant="outline" type="single">
             <ToggleGroupItem isFirst value="male" aria-label="Toggle bold" className='flex-1'>
               <Ionicons name="male" size={20} color={PRIMARY} />

@@ -8,7 +8,7 @@ const Logo = () => {
         width: 250,
         height: 100,
       }
-    } resizeMode='center' source={require('@/assets/images/fitzone_logo_cut.png')} />
+    } resizeMode='contain' source={require('@/assets/images/fitzone_logo_cut.png')} />
   )
 }
 
