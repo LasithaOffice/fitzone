@@ -29,43 +29,40 @@ const useFormInputWithDropdown = ({
   const [value, setValue] = useState<string>();
   const [allItem, setAllItem] = useState<SelectItem[]>(items)
 
-  const Component = () => {
+  const ref = React.useRef<TriggerRef>(null);
 
-    const ref = React.useRef<TriggerRef>(null);
+  const mt = useMemo(() => (
+    topGap ? { marginTop: topGap } : {}
+  ), [topGap])
 
-    const mt = useMemo(() => (
-      topGap ? { marginTop: topGap } : {}
-    ), [topGap])
-
-    return (
-      < >
-        <Text className={`text-gray-300 text-sm ${topGap ? `mt-[${10}px]` : ''}`} style={mt}>{title}</Text>
-        <View className='flex-row gap-2 mt-2 w-full'>
-          <Input className='flex-1' placeholder={placeHolder} inputMode='numeric' value={value} onChangeText={setValue} />
-          <Select value={allItem.find(s => s.value == selected)} onValueChange={(p) => {
-            setSelected(p?.value + "")
-          }}>
-            <SelectTrigger ref={ref}>
-              <SelectValue placeholder="" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>{listTitle}</SelectLabel>
-                {allItem.map((item) => (
-                  <SelectItem key={item.value} label={item.label} value={item.value}>
-                    {item.label}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </View>
-      </>
-    )
-  }
+  const element = (
+    <>
+      <Text className={`text-gray-300 text-sm ${topGap ? `mt-[${10}px]` : ''}`} style={mt}>{title}</Text>
+      <View className='flex-row gap-2 mt-2 w-full'>
+        <Input className='flex-1' placeholder={placeHolder} inputMode='numeric' value={value} onChangeText={setValue} />
+        <Select value={allItem.find(s => s.value == selected)} onValueChange={(p) => {
+          setSelected(p?.value + "")
+        }}>
+          <SelectTrigger ref={ref}>
+            <SelectValue placeholder="" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>{listTitle}</SelectLabel>
+              {allItem.map((item) => (
+                <SelectItem key={item.value} label={item.label} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </View>
+    </>
+  )
 
   return {
-    Component,
+    element,
     setAllItem,
     selected,
     value

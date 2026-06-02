@@ -8,8 +8,10 @@ import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from 'nativewind';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { KeyboardProvider } from 'react-native-keyboard-controller'
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 import * as SystemUI from 'expo-system-ui';
+import { Provider } from 'react-redux';
+import { store } from '@/store';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -31,14 +33,16 @@ export default function RootLayout() {
   }, [colorScheme]);
 
   return (
-    <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}>
-      <KeyboardProvider>
-        <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-        <Stack screenOptions={{ headerShown: false, }} initialRouteName='index' >
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-        <PortalHost />
-      </KeyboardProvider>
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}>
+        <KeyboardProvider>
+          <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+          <Stack screenOptions={{ headerShown: false, }} initialRouteName='index' >
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
+          <PortalHost />
+        </KeyboardProvider>
+      </ThemeProvider>
+    </Provider>
   );
 }

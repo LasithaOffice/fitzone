@@ -1,11 +1,13 @@
 import { View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import RegistrationWrapper from '../components/RegistrationWrapper'
 import { Text } from '@/components/ui/text'
 import { FontAwesome6, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import { COMP_BORDER_COLOR_SELECTED, ICON_COLOR } from '@/constants/colors'
 import { router } from 'expo-router'
 import ItemBox from '../components/ItemBox'
+import { useAppDispatch, useAppSelector } from '@/store'
+import { registerUser, resetRegistration } from '@/store/authSlice'
 
 export type Levels = {
   icon: any,
@@ -69,12 +71,27 @@ const goals: Levels[] = [
 ];
 
 const JoinScreen3 = () => {
+  const dispatch = useAppDispatch();
+  const { loading, error, registrationSuccess } = useAppSelector((state) => state.auth);
 
   const [selectedFitnessLevel, setSelectedFitnessLevel] = useState<Levels>(fitnessLevels[0]);
   const [selectedGoal, setSelectedGoal] = useState<Levels>(goals[0]);
 
+  useEffect(() => {
+    if (registrationSuccess) {
+      // Clear redux flow state after completion, and redirect
+      dispatch(resetRegistration());
+      router.replace("/(tabs)");
+    }
+  }, [registrationSuccess, dispatch]);
+
   const continueProcess = () => {
-    router.replace("/(tabs)")
+    dispatch(
+      registerUser({
+        fitnessLevel: selectedFitnessLevel.title.replace(/\n/g, ' '),
+        goal: selectedGoal.title.replace(/\n/g, ' '),
+      })
+    );
   }
 
   return (
@@ -86,8 +103,15 @@ const JoinScreen3 = () => {
       }}
       subTitle={"Help us personalize your fitness journey."}
       step={2}
+      loading={loading}
     >
       <View className='mt-5'>
+        {error && (
+          <View className='bg-red-500/10 border border-red-500/30 p-3 rounded-lg mb-4'>
+            <Text className='text-red-500 text-sm text-center'>{error}</Text>
+          </View>
+        )}
+
         <Text className='mt-10'>Fitness Level</Text>
         <View className='w-full items-start flex-row gap-2 mt-4 h-32'>
           {

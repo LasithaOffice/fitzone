@@ -12,6 +12,11 @@ export default function Screen() {
 
   const { setColorScheme } = useColorScheme();
 
+  /**
+   * npx expo prebuild --clean      
+   * npx expo run:android    
+   */
+
   React.useEffect(() => {
     setColorScheme('dark')
     const timer = setTimeout(() => {

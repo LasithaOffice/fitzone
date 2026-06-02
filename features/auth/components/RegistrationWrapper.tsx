@@ -1,4 +1,4 @@
-import { View } from 'react-native'
+import { View, ActivityIndicator } from 'react-native'
 import React from 'react'
 import ViewBox from '@/components/wrappers/ViewBox'
 import Logo from '@/components/features/Logo'
@@ -14,6 +14,7 @@ type Props = {
   onBack?: () => void,
   step: number
   children: React.ReactNode
+  loading?: boolean
 }
 
 const RegistrationWrapper = ({
@@ -22,7 +23,8 @@ const RegistrationWrapper = ({
   onPress,
   onBack,
   step,
-  subTitle
+  subTitle,
+  loading = false
 }: Props) => {
 
   return (
@@ -40,14 +42,20 @@ const RegistrationWrapper = ({
       <View className='flex-row gap-2'>
         {
           (onBack) &&
-          <Button className='flex-1' variant={'secondary'} onPress={onBack} >
+          <Button className='flex-1' variant={'secondary'} onPress={onBack} disabled={loading}>
             <Text>{"Back"}</Text>
           </Button>
         }
-        <Button className='justify-between flex-1' onPress={onPress} >
-          <View></View>
-          <Text>{"Continue"}</Text>
-          <FontAwesome6 name="arrow-right" size={16} color="black" />
+        <Button className='justify-between flex-1' onPress={onPress} disabled={loading}>
+          {loading ? (
+            <ActivityIndicator color="black" style={{ flex: 1 }} />
+          ) : (
+            <>
+              <View></View>
+              <Text>{"Continue"}</Text>
+              <FontAwesome6 name="arrow-right" size={16} color="black" />
+            </>
+          )}
         </Button>
       </View>
       <View className='flex-row p-2 gap-2 mt-5 justify-center mb-5'>
