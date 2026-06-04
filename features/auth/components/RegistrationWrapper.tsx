@@ -4,7 +4,6 @@ import ViewBox from '@/components/wrappers/ViewBox'
 import Logo from '@/components/features/Logo'
 import { Text } from '@/components/ui/text'
 import { Button } from '@/components/ui/button'
-import { Text as RNText } from 'react-native';
 import { FontAwesome6 } from '@expo/vector-icons'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
 type Props = {
@@ -39,7 +38,7 @@ const RegistrationWrapper = ({
           {children}
         </ViewBox>
       </KeyboardAwareScrollView>
-      <View className='flex-row gap-2'>
+      <View className='flex-row gap-2 pt-4'>
         {
           (onBack) &&
           <Button className='flex-1' variant={'secondary'} onPress={onBack} disabled={loading}>
@@ -62,6 +61,8 @@ const RegistrationWrapper = ({
         <View className={`h-1 w-8 ${step == 0 ? 'bg-primary' : 'opacity-15 bg-white'} rounded-lg`}></View>
         <View className={`h-1 w-8 ${step == 1 ? 'bg-primary' : 'opacity-15 bg-white'} rounded-lg`}></View>
         <View className={`h-1 w-8 ${step == 2 ? 'bg-primary' : 'opacity-15 bg-white'} rounded-lg`}></View>
+        <View className={`h-1 w-8 ${step == 3 ? 'bg-primary' : 'opacity-15 bg-white'} rounded-lg`}></View>
+        <View className={`h-1 w-8 ${step == 4 ? 'bg-primary' : 'opacity-15 bg-white'} rounded-lg`}></View>
       </View>
     </ViewBox>
   )

@@ -7,7 +7,7 @@ import { COMP_BORDER_COLOR_SELECTED, ICON_COLOR } from '@/constants/colors'
 import { router } from 'expo-router'
 import ItemBox from '../components/ItemBox'
 import { useAppDispatch, useAppSelector } from '@/store'
-import { registerUser, resetRegistration } from '@/store/authSlice'
+import { setGoalsAndLevel } from '@/store/authSlice'
 
 export type Levels = {
   icon: any,
@@ -72,26 +72,19 @@ const goals: Levels[] = [
 
 const JoinScreen3 = () => {
   const dispatch = useAppDispatch();
-  const { loading, error, registrationSuccess } = useAppSelector((state) => state.auth);
+  const { loading, error } = useAppSelector((state) => state.auth);
 
   const [selectedFitnessLevel, setSelectedFitnessLevel] = useState<Levels>(fitnessLevels[0]);
   const [selectedGoal, setSelectedGoal] = useState<Levels>(goals[0]);
 
-  useEffect(() => {
-    if (registrationSuccess) {
-      // Clear redux flow state after completion, and redirect
-      dispatch(resetRegistration());
-      router.replace("/(tabs)");
-    }
-  }, [registrationSuccess, dispatch]);
-
   const continueProcess = () => {
     dispatch(
-      registerUser({
+      setGoalsAndLevel({
         fitnessLevel: selectedFitnessLevel.title.replace(/\n/g, ' '),
         goal: selectedGoal.title.replace(/\n/g, ' '),
       })
     );
+    router.push('/(auth)/join4');
   }
 
   return (

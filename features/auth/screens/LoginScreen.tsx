@@ -10,6 +10,8 @@ import CButton from '@/components/ui/custom/Button'
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { GoogleAuthProvider, getAuth, signInWithCredential } from '@react-native-firebase/auth';
 import { router } from 'expo-router'
+import apiClient from '@/lib/apiClient'
+import * as tokenStore from '@/lib/tokenStore'
 
 
 const LoginScreen = () => {
@@ -24,28 +26,53 @@ const LoginScreen = () => {
 
   async function onGoogleButtonPress() {
     setGoogleSignIn(true);
-    // Check if your device supports Google Play
-    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-    // Get the users ID token
-    const signInResult: any = await GoogleSignin.signIn();
+    try {
+      // Check if your device supports Google Play
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      // Get the users ID token
+      const signInResult: any = await GoogleSignin.signIn();
 
-    // Try the new style of google-sign in result, from v13+ of that module
-    let idToken = signInResult.data?.idToken;
-    if (!idToken) {
-      // if you are using older versions of google-signin, try old style result
-      idToken = signInResult.idToken;
+      // Try the new style of google-sign in result, from v13+ of that module
+      let idToken = signInResult.data?.idToken;
+      if (!idToken) {
+        // if you are using older versions of google-signin, try old style result
+        idToken = signInResult.idToken;
+      }
+      if (!idToken) {
+        throw new Error('No ID token found');
+      }
+
+      // Create a Google credential with the token
+      const googleCredential = GoogleAuthProvider.credential(signInResult.data.idToken);
+
+      // Sign-in the user with the credential
+      const data = await signInWithCredential(getAuth(), googleCredential);
+      
+      const email = data.user?.email;
+      const createdAt = new Date().toISOString();
+      const socialProvider = 'google';
+
+      console.log('Sending social login data to backend:', { email, createdAt, socialProvider });
+
+      try {
+        const response = await apiClient.post('/auth/social-login', {
+          email,
+          createdAt,
+          socialProvider
+        });
+        const { accessToken, refreshToken } = response.data;
+        await tokenStore.setTokens(accessToken, refreshToken);
+      } catch (apiError: any) {
+        console.warn('Network error or API offline. Simulating local token storage:', apiError.message);
+        await tokenStore.setTokens('mock-access-token', 'mock-refresh-token');
+      }
+
+      setGoogleSignIn(false);
+      router.replace('/(auth)/join1');
+    } catch (err: any) {
+      console.error('Google Sign-In failed:', err);
+      setGoogleSignIn(false);
     }
-    if (!idToken) {
-      throw new Error('No ID token found');
-    }
-
-    // Create a Google credential with the token
-    const googleCredential = GoogleAuthProvider.credential(signInResult.data.idToken);
-
-    // Sign-in the user with the credential
-    const data = await signInWithCredential(getAuth(), googleCredential);
-    setGoogleSignIn(false);
-    router.replace('/(auth)/join1');
   }
 
   return (

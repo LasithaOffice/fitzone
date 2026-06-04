@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import apiClient from '@/lib/apiClient';
 
 export interface AuthState {
   fullName: string;
@@ -10,6 +11,16 @@ export interface AuthState {
   heightUnit: string;
   fitnessLevel: string;
   goal: string;
+  // New health & lifestyle fields
+  allergies: string[];
+  chronicConditions: string[];
+  injuryHistory: string;
+  targetWeightValue: string;
+  targetWeightUnit: string;
+  workoutFrequency: string;
+  workoutDuration: string;
+  sleepDuration: string;
+  occupationType: string;
   loading: boolean;
   error: string | null;
   registrationSuccess: boolean;
@@ -25,6 +36,16 @@ const initialState: AuthState = {
   heightUnit: 'cm',
   fitnessLevel: '',
   goal: '',
+  // New fields initial state
+  allergies: [],
+  chronicConditions: [],
+  injuryHistory: '',
+  targetWeightValue: '',
+  targetWeightUnit: 'kg',
+  workoutFrequency: '',
+  workoutDuration: '',
+  sleepDuration: '',
+  occupationType: '',
   loading: false,
   error: null,
   registrationSuccess: false,
@@ -32,7 +53,7 @@ const initialState: AuthState = {
 
 export const registerUser = createAsyncThunk(
   'auth/registerUser',
-  async (payload: { fitnessLevel: string; goal: string }, { getState, rejectWithValue }) => {
+  async (_, { getState, rejectWithValue }) => {
     try {
       const state = (getState() as any).auth as AuthState;
       const registrationData = {
@@ -47,42 +68,37 @@ export const registerUser = createAsyncThunk(
           value: parseFloat(state.heightValue) || 0,
           unit: state.heightUnit,
         },
-        fitnessLevel: payload.fitnessLevel,
-        goal: payload.goal,
+        fitnessLevel: state.fitnessLevel,
+        goal: state.goal,
+        // New fields
+        allergies: state.allergies,
+        chronicConditions: state.chronicConditions,
+        injuryHistory: state.injuryHistory,
+        targetWeight: {
+          value: parseFloat(state.targetWeightValue) || 0,
+          unit: state.targetWeightUnit,
+        },
+        workoutFrequency: state.workoutFrequency,
+        workoutDuration: state.workoutDuration,
+        sleepDuration: parseFloat(state.sleepDuration) || 0,
+        occupationType: state.occupationType,
       };
 
       console.log('Sending registration request to backend:', JSON.stringify(registrationData, null, 2));
 
-      // Attempt to hit the backend API.
-      const controller = new AbortController();
-      const id = setTimeout(() => controller.abort(), 4000);
-
       try {
-        const response = await fetch('http://localhost:3000/api/auth/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(registrationData),
-          signal: controller.signal,
+        const response = await apiClient.post('/auth/register', registrationData, {
+          timeout: 4000,
         });
-        clearTimeout(id);
-
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          return rejectWithValue(errorData.message || 'Registration failed on backend server.');
+        return response.data;
+      } catch (error: any) {
+        if (error.response) {
+          return rejectWithValue(error.response.data?.message || 'Registration failed on backend server.');
         }
-
-        const data = await response.json();
-        return data;
-      } catch (networkError: any) {
-        clearTimeout(id);
-        console.warn('Network error or API offline. Simulating successful registration for onboarding walkthrough:', networkError.message);
         
-        // Simulating backend delay to show the nice visual loading indicator
+        console.warn('Network error or API offline. Simulating successful registration for onboarding walkthrough:', error.message);
         await new Promise((resolve) => setTimeout(resolve, 1500));
         
-        // Return a mock successful response
         return {
           success: true,
           message: 'User registered successfully (Simulated Backend Response)',
@@ -121,6 +137,43 @@ const authSlice = createSlice({
       state.heightValue = action.payload.heightValue;
       state.heightUnit = action.payload.heightUnit;
     },
+    setGoalsAndLevel: (
+      state,
+      action: PayloadAction<{ fitnessLevel: string; goal: string }>
+    ) => {
+      state.fitnessLevel = action.payload.fitnessLevel;
+      state.goal = action.payload.goal;
+    },
+    setMedicalAndTargetInfo: (
+      state,
+      action: PayloadAction<{
+        allergies: string[];
+        chronicConditions: string[];
+        injuryHistory: string;
+        targetWeightValue: string;
+        targetWeightUnit: string;
+      }>
+    ) => {
+      state.allergies = action.payload.allergies;
+      state.chronicConditions = action.payload.chronicConditions;
+      state.injuryHistory = action.payload.injuryHistory;
+      state.targetWeightValue = action.payload.targetWeightValue;
+      state.targetWeightUnit = action.payload.targetWeightUnit;
+    },
+    setLifestyleInfo: (
+      state,
+      action: PayloadAction<{
+        workoutFrequency: string;
+        workoutDuration: string;
+        sleepDuration: string;
+        occupationType: string;
+      }>
+    ) => {
+      state.workoutFrequency = action.payload.workoutFrequency;
+      state.workoutDuration = action.payload.workoutDuration;
+      state.sleepDuration = action.payload.sleepDuration;
+      state.occupationType = action.payload.occupationType;
+    },
     resetRegistration: (state) => {
       state.registrationSuccess = false;
       state.error = null;
@@ -138,10 +191,18 @@ const authSlice = createSlice({
         state.loading = false;
         state.registrationSuccess = true;
         state.error = null;
-        // Merge the final fitness level and goal into the state on success
         if (action.payload?.user) {
           state.fitnessLevel = action.payload.user.fitnessLevel;
           state.goal = action.payload.user.goal;
+          state.allergies = action.payload.user.allergies || [];
+          state.chronicConditions = action.payload.user.chronicConditions || [];
+          state.injuryHistory = action.payload.user.injuryHistory || '';
+          state.targetWeightValue = action.payload.user.targetWeight?.value?.toString() || '';
+          state.targetWeightUnit = action.payload.user.targetWeight?.unit || 'kg';
+          state.workoutFrequency = action.payload.user.workoutFrequency || '';
+          state.workoutDuration = action.payload.user.workoutDuration || '';
+          state.sleepDuration = action.payload.user.sleepDuration?.toString() || '';
+          state.occupationType = action.payload.user.occupationType || '';
         }
       })
       .addCase(registerUser.rejected, (state, action) => {
@@ -152,5 +213,13 @@ const authSlice = createSlice({
   },
 });
 
-export const { setProfileInfo, setPhysicalInfo, resetRegistration } = authSlice.actions;
+export const { 
+  setProfileInfo, 
+  setPhysicalInfo, 
+  setGoalsAndLevel, 
+  setMedicalAndTargetInfo, 
+  setLifestyleInfo, 
+  resetRegistration 
+} = authSlice.actions;
+
 export default authSlice.reducer;

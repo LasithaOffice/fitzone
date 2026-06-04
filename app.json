@@ -20,7 +20,6 @@
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#000000"
       },
-      // "softwareKeyboardLayoutMode": "resize",
       "googleServicesFile": "./google-services.json",
       "package": "com.fitzone.app"
     },
@@ -59,7 +58,8 @@
           "disableLibdav1d": true
         }
       ],
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true

@@ -8,22 +8,22 @@ const iconSize = 25;
 const menuItems = [
   {
     icon: <MaterialCommunityIcons name="fire" size={iconSize} color={PRIMARY} />,
-    title: '1,250',
+    title: '0.0',
     desc: "Cal Burned"
   },
   {
     icon: <Feather name="bar-chart" size={iconSize} color={PRIMARY} />,
-    title: '4',
+    title: '0',
     desc: "Workouts"
   },
   {
     icon: <MaterialCommunityIcons name="clock-outline" size={iconSize} color={PRIMARY} />,
-    title: '3h 20m',
+    title: '0h 0m',
     desc: "Duration"
   },
   {
     icon: <MaterialCommunityIcons name="chart-bell-curve-cumulative" size={iconSize} color={PRIMARY} />,
-    title: '4 / 7',
+    title: '0 / 7',
     desc: "Overall Progress"
   }
 ]

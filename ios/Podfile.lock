@@ -11,7 +11,7 @@ PODS:
     - PromisesObjC (~> 2.4)
   - EXConstants (55.0.16):
     - ExpoModulesCore
-  - Expo (55.0.23):
+  - Expo (55.0.26):
     - ExpoModulesCore
     - hermes-engine
     - RCTRequired
@@ -44,15 +44,15 @@ PODS:
     - ExpoModulesCore
   - ExpoDomWebView (55.0.6):
     - ExpoModulesCore
-  - ExpoFileSystem (55.0.19):
+  - ExpoFileSystem (55.0.22):
     - ExpoModulesCore
-  - ExpoFont (55.0.7):
+  - ExpoFont (55.0.8):
     - ExpoModulesCore
   - ExpoGlassEffect (55.0.11):
     - ExpoModulesCore
   - ExpoHaptics (55.0.14):
     - ExpoModulesCore
-  - ExpoImage (55.0.10):
+  - ExpoImage (55.0.11):
     - ExpoModulesCore
     - SDWebImage (~> 5.21.0)
     - SDWebImageAVIFCoder (~> 0.11.0)
@@ -94,14 +94,16 @@ PODS:
     - React-Core
     - React-runtimescheduler
     - ReactCommon
-  - ExpoRouter (55.0.14):
+  - ExpoRouter (55.0.16):
     - ExpoModulesCore
     - RNScreens
-  - ExpoSplashScreen (55.0.20):
+  - ExpoSecureStore (55.0.14):
     - ExpoModulesCore
-  - ExpoSymbols (55.0.8):
+  - ExpoSplashScreen (55.0.21):
     - ExpoModulesCore
-  - ExpoSystemUI (55.0.17):
+  - ExpoSymbols (55.0.9):
+    - ExpoModulesCore
+  - ExpoSystemUI (55.0.18):
     - ExpoModulesCore
   - FBLazyVector (0.83.6)
   - Firebase/Auth (12.10.0):
@@ -2430,6 +2432,7 @@ DEPENDENCIES:
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
   - ExpoModulesJSI (from `../node_modules/expo-modules-core`)
   - ExpoRouter (from `../node_modules/expo-router/ios`)
+  - ExpoSecureStore (from `../node_modules/expo-secure-store/ios`)
   - ExpoSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - ExpoSymbols (from `../node_modules/expo-symbols/ios`)
   - ExpoSystemUI (from `../node_modules/expo-system-ui/ios`)
@@ -2575,6 +2578,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-modules-core"
   ExpoRouter:
     :path: "../node_modules/expo-router/ios"
+  ExpoSecureStore:
+    :path: "../node_modules/expo-secure-store/ios"
   ExpoSplashScreen:
     :path: "../node_modules/expo-splash-screen/ios"
   ExpoSymbols:
@@ -2753,24 +2758,25 @@ SPEC CHECKSUMS:
   AppAuth: 1c1a8afa7e12f2ec3a294d9882dfa5ab7d3cb063
   AppCheckCore: cc8fd0a3a230ddd401f326489c99990b013f0c4f
   EXConstants: dadbeba983acc30f855a919658a2b34fbd86615d
-  Expo: 520f4467faedea3a6a5a8708f3262b5a0b018484
+  Expo: 8e8ecd17dda20990ebe5d0db7422c5f3083169f0
   ExpoAdapterGoogleSignIn: ab4d9fc38cb91077a4138d178395525ec65d0c2e
   ExpoAsset: 7721c5c4ae2a7c3c8147a046727ac6c020b05648
   ExpoDomWebView: b2e9d601f9cb77d3c97da73234e175b64be91928
-  ExpoFileSystem: 0b73b097e67c83622640168f620defc65a1a6f70
-  ExpoFont: a95606f106a6394df8edf6d0d87aab9020af5ad4
+  ExpoFileSystem: 61e663d0bbd1a973d324530d1d6ee559a5e5192c
+  ExpoFont: a7e34a75bdfb703fa07a0e87807f836236608c76
   ExpoGlassEffect: 2dedac2fe817f9b02d0dad29ce0aef7afebc5cd4
   ExpoHaptics: 679f09dc37d5981e619bc197732007a3334e80b8
-  ExpoImage: a11075e6b641e69e6d9990e3e8b1230eb7f7acd3
+  ExpoImage: e913770813f472c4f17e7f130fafa4b9543a003f
   ExpoKeepAwake: d0eb7a0719500d2a43fbf29b6f79e84d70c75ebf
   ExpoLinking: 40f36cf134ea6930f37867858c0643877b865d53
   ExpoLogBox: a678d36477ab9544fe63e0b5328a0716539b6774
   ExpoModulesCore: 100f9f3fd9bf5d1ae3dd7a1fb0b6fcaa8f016bf5
   ExpoModulesJSI: 1685389cde9f19c40f98ca0ad46d4804471486cc
-  ExpoRouter: 0948f6a7c3949e8405099663e55d149408afc021
-  ExpoSplashScreen: 3e64eed7a300d4e1131e8b419b5cea6e604adba7
-  ExpoSymbols: 446a0835f3fb505214891d72baf5edf1de2ee4e7
-  ExpoSystemUI: 580f7a0e688715502a690817789c95a59c72840f
+  ExpoRouter: e0e2aa4b03843e7abfa3e63e0cdd6c642d74780f
+  ExpoSecureStore: 0e7959ad3a9fa59306d55f26a37854640dd334c2
+  ExpoSplashScreen: 049301b226bce8284fcafb7923fcad3a43f23a9f
+  ExpoSymbols: 896159288ad708e1a32dc12c92fe5f90bff01126
+  ExpoSystemUI: fbc4f8af83f2b8338c1de69a79624769536f09d1
   FBLazyVector: 427fa1856a481856091061293ce865a75aa4f20f
   Firebase: 99f203d3a114c6ba591f3b32263a9626e450af65
   FirebaseAppCheckInterop: 2480ab50a070a6bc02e26e62733874361f017a11
