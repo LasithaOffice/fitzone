@@ -1,53 +1,50 @@
 import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { COMP_BACKGROUND_COLOR, COMP_BORDER_COLOR, GRAY, PRIMARY } from '@/constants/colors'
-import { FontAwesome5, Feather, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome5, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useAppSelector } from '@/store'
 
 const iconSize = 25;
 
-const menuItems = [
-  {
-    icon: <MaterialCommunityIcons name="fire" size={iconSize} color={PRIMARY} />,
-    title: '0.0',
-    desc: "Cal Burned"
-  },
-  {
-    icon: <Feather name="bar-chart" size={iconSize} color={PRIMARY} />,
-    title: '0',
-    desc: "Workouts"
-  },
-  {
-    icon: <MaterialCommunityIcons name="clock-outline" size={iconSize} color={PRIMARY} />,
-    title: '0h 0m',
-    desc: "Duration"
-  },
-  {
-    icon: <MaterialCommunityIcons name="chart-bell-curve-cumulative" size={iconSize} color={PRIMARY} />,
-    title: '0 / 7',
-    desc: "Overall Progress"
-  }
-]
-
 const ProgressOverview = () => {
+  const { mlOutputs } = useAppSelector((state) => state.plan)
+
+  const items = [
+    {
+      icon: <MaterialCommunityIcons name="fire" size={iconSize} color={PRIMARY} />,
+      title: mlOutputs ? `${mlOutputs.targetCalories}` : '3298',
+      desc: "Daily kcal"
+    },
+    {
+      icon: <MaterialCommunityIcons name="food-apple" size={iconSize} color={PRIMARY} />,
+      title: mlOutputs ? `${mlOutputs.targetProteinG}g` : '188g',
+      desc: "Daily Protein"
+    },
+    {
+      icon: <FontAwesome5 name="dumbbell" size={20} color={PRIMARY} />,
+      title: mlOutputs ? `${mlOutputs.weeklyVolumeSets}` : '17',
+      desc: "Weekly Sets"
+    },
+    {
+      icon: <MaterialCommunityIcons name="speedometer" size={iconSize} color={PRIMARY} />,
+      title: mlOutputs ? `Lvl ${mlOutputs.intensityLevel}` : 'Lvl 2',
+      desc: "Intensity"
+    }
+  ]
+
   return (
     <View>
-      <View className='flex-row mx-4 items-center'>
-        <Text className='flex-1 text-white'>Progress Overview</Text>
-        <TouchableOpacity className='flex-row' onPress={() => {
-
-        }}>
-          <Text className='text-primary mr-2'>View all</Text>
-          <Feather name="chevron-right" size={20} color={GRAY} />
-        </TouchableOpacity>
+      <View className='flex-row mx-4 items-center mt-4'>
+        <Text className='flex-1 text-white font-bold'>Target Metrics</Text>
       </View>
-      <View className='px-2 py-2 m-4 rounded-lg flex-row' style={{ backgroundColor: COMP_BACKGROUND_COLOR, borderColor: COMP_BORDER_COLOR, borderWidth: 1 }}>
+      <View className='px-2 py-3 m-4 rounded-xl flex-row border' style={{ backgroundColor: COMP_BACKGROUND_COLOR, borderColor: COMP_BORDER_COLOR }}>
         {
-          menuItems.map((s, index) =>
-            <TouchableOpacity key={s.title} className={`items-center gap-2 flex-1 ${(index < menuItems.length - 1) ? 'border-r-[1px]' : ''}`} style={{ borderColor: COMP_BORDER_COLOR }}>
+          items.map((s, index) =>
+            <View key={s.desc} className={`items-center gap-1.5 flex-1 ${(index < items.length - 1) ? 'border-r' : ''}`} style={{ borderColor: COMP_BORDER_COLOR }}>
               {s.icon}
-              <Text className='text-[14px] text-center text-white'>{s.title}</Text>
-              <Text className='text-white text-center text-[11px]'>{s.desc}</Text>
-            </TouchableOpacity>
+              <Text className='text-[13px] font-extrabold text-center text-white mt-1'>{s.title}</Text>
+              <Text className='text-zinc-500 text-center text-[10px] uppercase font-bold'>{s.desc}</Text>
+            </View>
           )
         }
       </View>

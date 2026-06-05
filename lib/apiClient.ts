@@ -6,8 +6,19 @@ const API_BASE_URL = Platform.OS === 'android'
   ? 'http://10.0.2.2:3000/api'
   : 'http://localhost:3000/api';
 
+const AI_API_BASE_URL = Platform.OS === 'android'
+  ? 'http://10.0.2.2:8000'
+  : 'http://localhost:8000';
+
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+export const aiApiClient = axios.create({
+  baseURL: AI_API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -68,4 +79,4 @@ apiClient.interceptors.response.use(
 );
 
 export default apiClient;
-export { API_BASE_URL };
+export { API_BASE_URL, AI_API_BASE_URL };
