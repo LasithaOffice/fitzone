@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, TouchableOpacity, SafeAreaView, ActivityIndicator } from 'react-native';
+import { View, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { toggleMealTakenLocal, logMeal, getTodayKey, getTodayName } from '@/store/planSlice';
@@ -7,13 +7,14 @@ import { BACKGROUND_COLOR, COMP_BACKGROUND_COLOR, COMP_BORDER_COLOR, PRIMARY, SE
 import { Ionicons, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
 const Nutrition = () => {
   const dispatch = useAppDispatch();
   const { mealPlan, mealTracking, loading } = useAppSelector((state) => state.plan);
-  
+
   // Set default selected day to today (if today is Rest day, still can select it)
   const todayName = getTodayName();
   const initialDayIndex = DAYS.includes(todayName) ? todayName : 'Monday';
@@ -40,7 +41,7 @@ const Nutrition = () => {
   const handleToggleMeal = (mealName: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     const isCurrentlyTaken = dayTracking[mealName] ?? false;
-    
+
     // Toggle local state
     dispatch(toggleMealTakenLocal({ dateKey, mealName }));
 
@@ -65,11 +66,11 @@ const Nutrition = () => {
     <SafeAreaView className="flex-1" style={{ backgroundColor: BACKGROUND_COLOR }}>
       {/* Header */}
       <View className="px-4 py-3 flex-row items-center border-b" style={{ borderColor: COMP_BORDER_COLOR }}>
-        <TouchableOpacity 
+        <TouchableOpacity
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             router.back();
-          }} 
+          }}
           className="mr-3 p-1"
         >
           <Ionicons name="arrow-back" size={24} color="white" />
@@ -100,14 +101,14 @@ const Nutrition = () => {
                   borderColor: isSelected ? PRIMARY : (isToday ? PRIMARY + '66' : COMP_BORDER_COLOR),
                 }}
               >
-                <Text 
+                <Text
                   className="font-bold text-sm"
                   style={{ color: isSelected ? 'black' : 'white' }}
                 >
                   {day.substring(0, 3)}
                 </Text>
                 {isToday && (
-                  <View 
+                  <View
                     className="w-1.5 h-1.5 rounded-full ml-1.5"
                     style={{ backgroundColor: isSelected ? 'black' : PRIMARY }}
                   />
@@ -157,11 +158,11 @@ const Nutrition = () => {
             const isTaken = dayTracking[meal.mealName] ?? false;
 
             return (
-              <View 
-                key={meal.name} 
+              <View
+                key={meal.name}
                 className="mb-4 rounded-2xl border overflow-hidden transition-all duration-300"
-                style={{ 
-                  backgroundColor: COMP_BACKGROUND_COLOR, 
+                style={{
+                  backgroundColor: COMP_BACKGROUND_COLOR,
                   borderColor: isTaken ? PRIMARY : COMP_BORDER_COLOR,
                   borderWidth: isTaken ? 1.5 : 1
                 }}
@@ -170,10 +171,10 @@ const Nutrition = () => {
                 <View className="p-4 flex-row justify-between items-center border-b border-zinc-900 bg-zinc-900/40">
                   <View className="flex-row items-center gap-2">
                     <View className="p-2 rounded-lg" style={{ backgroundColor: isTaken ? PRIMARY + '15' : 'rgba(255,255,255,0.05)' }}>
-                      <FontAwesome5 
-                        name={meal.name.toLowerCase() === 'breakfast' ? 'coffee' : meal.name.toLowerCase() === 'snack' ? 'apple-alt' : 'utensils'} 
-                        size={16} 
-                        color={isTaken ? PRIMARY : 'white'} 
+                      <FontAwesome5
+                        name={meal.name.toLowerCase() === 'breakfast' ? 'coffee' : meal.name.toLowerCase() === 'snack' ? 'apple-alt' : 'utensils'}
+                        size={16}
+                        color={isTaken ? PRIMARY : 'white'}
                       />
                     </View>
                     <View>
@@ -211,13 +212,13 @@ const Nutrition = () => {
                       const isExcluded = item.includes('[EXCLUDED');
                       return (
                         <View key={index} className="flex-row items-start gap-2">
-                          <Ionicons 
-                            name={isExcluded ? "warning" : "ellipse"} 
-                            size={isExcluded ? 14 : 6} 
-                            color={isExcluded ? "#EF4444" : PRIMARY} 
-                            className="mt-1" 
+                          <Ionicons
+                            name={isExcluded ? "warning" : "ellipse"}
+                            size={isExcluded ? 14 : 6}
+                            color={isExcluded ? "#EF4444" : PRIMARY}
+                            className="mt-1"
                           />
-                          <Text 
+                          <Text
                             className={`text-xs flex-1 ${isExcluded ? 'text-red-400 line-through' : 'text-zinc-300'}`}
                           >
                             {item}

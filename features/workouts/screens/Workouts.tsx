@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, ScrollView, TouchableOpacity, SafeAreaView, ActivityIndicator } from 'react-native';
+import { View, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { useAppSelector, useAppDispatch } from '@/store';
 import { toggleSetCompletionLocal, logWorkoutSet, getTodayKey, getTodayName } from '@/store/planSlice';
 import { BACKGROUND_COLOR, COMP_BACKGROUND_COLOR, COMP_BORDER_COLOR, PRIMARY, SECONDARY, GRAY } from '@/constants/colors';
 import { Ionicons, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -101,14 +102,14 @@ const Workouts = () => {
                   borderColor: isSelected ? PRIMARY : (isToday ? PRIMARY + '66' : COMP_BORDER_COLOR),
                 }}
               >
-                <Text 
+                <Text
                   className="font-bold text-sm"
                   style={{ color: isSelected ? 'black' : 'white' }}
                 >
                   {day.substring(0, 3)}
                 </Text>
                 {isToday && (
-                  <View 
+                  <View
                     className="w-1.5 h-1.5 rounded-full ml-1.5"
                     style={{ backgroundColor: isSelected ? 'black' : PRIMARY }}
                   />
@@ -163,9 +164,9 @@ const Workouts = () => {
               const progressPct = (completedSetsCount / exercise.sets) * 100;
 
               return (
-                <View 
-                  key={exercise.name} 
-                  className="mb-4 p-4 rounded-2xl border" 
+                <View
+                  key={exercise.name}
+                  className="mb-4 p-4 rounded-2xl border"
                   style={{ backgroundColor: COMP_BACKGROUND_COLOR, borderColor: COMP_BORDER_COLOR }}
                 >
                   {/* Exercise Title Area */}
@@ -181,7 +182,7 @@ const Workouts = () => {
 
                   {/* Set Progress Bar */}
                   <View className="w-full bg-zinc-900 h-1.5 rounded-full overflow-hidden mb-4 border border-zinc-850">
-                    <View 
+                    <View
                       className="h-full rounded-full transition-all duration-300"
                       style={{ width: `${progressPct}%`, backgroundColor: PRIMARY }}
                     />
@@ -205,14 +206,14 @@ const Workouts = () => {
                           }}
                         >
                           {isUpcoming && (
-                            <View 
+                            <View
                               className="absolute -top-1.5 px-1 rounded-full bg-primary flex-row items-center border border-black"
                               style={{ transform: [{ scale: 0.85 }] }}
                             >
                               <Text className="text-[7px] font-black text-black uppercase tracking-wider">NEXT</Text>
                             </View>
                           )}
-                          <Text 
+                          <Text
                             className="text-[10px] font-extrabold"
                             style={{ color: isSetCompleted ? 'black' : (isUpcoming ? PRIMARY : 'white') }}
                           >
