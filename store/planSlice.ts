@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { aiApiClient } from '@/lib/apiClient';
+import apiClient, { aiApiClient } from '@/lib/apiClient';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -264,11 +264,11 @@ export const fetchPlan = createAsyncThunk(
   'plan/fetchPlan',
   async (userProfile: Record<string, unknown>, { rejectWithValue }) => {
     try {
-      const response = await aiApiClient.post('/generate-plan', userProfile);
+      const response = await apiClient.post('/auth/generate-plan', userProfile);
       return response.data;
     } catch (error: any) {
-      console.warn('Failed to fetch plan from AI server, using pre-populated plan:', error.message);
-      return rejectWithValue(error?.response?.data?.detail || error.message || 'Failed to fetch plan');
+      console.warn('Failed to fetch plan from backend server, using pre-populated plan:', error.message);
+      return rejectWithValue(error?.response?.data?.message || error.message || 'Failed to fetch plan');
     }
   }
 );

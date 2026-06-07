@@ -27,15 +27,16 @@ export interface AuthState {
 }
 
 const initialState: AuthState = {
-  fullName: '',
-  birthday: '',
+
+  fullName: 'Lasitha Lakmal',
+  birthday: '1993-10-03',
   gender: 'male',
-  weightValue: '',
+  weightValue: '75',
   weightUnit: 'kg',
-  heightValue: '',
+  heightValue: '175',
   heightUnit: 'cm',
-  fitnessLevel: '',
-  goal: '',
+  fitnessLevel: 'Beginner',
+  goal: 'Weight Loss',
   // New fields initial state
   allergies: [],
   chronicConditions: [],
@@ -49,6 +50,29 @@ const initialState: AuthState = {
   loading: false,
   error: null,
   registrationSuccess: false,
+
+  // fullName: '',
+  // birthday: '',
+  // gender: 'male',
+  // weightValue: '',
+  // weightUnit: 'kg',
+  // heightValue: '',
+  // heightUnit: 'cm',
+  // fitnessLevel: '',
+  // goal: '',
+  // // New fields initial state
+  // allergies: [],
+  // chronicConditions: [],
+  // injuryHistory: '',
+  // targetWeightValue: '',
+  // targetWeightUnit: 'kg',
+  // workoutFrequency: '',
+  // workoutDuration: '',
+  // sleepDuration: '',
+  // occupationType: '',
+  // loading: false,
+  // error: null,
+  // registrationSuccess: false,
 };
 
 export const registerUser = createAsyncThunk(
@@ -95,10 +119,10 @@ export const registerUser = createAsyncThunk(
         if (error.response) {
           return rejectWithValue(error.response.data?.message || 'Registration failed on backend server.');
         }
-        
+
         console.warn('Network error or API offline. Simulating successful registration for onboarding walkthrough:', error.message);
         await new Promise((resolve) => setTimeout(resolve, 1500));
-        
+
         return {
           success: true,
           message: 'User registered successfully (Simulated Backend Response)',
@@ -213,13 +237,13 @@ const authSlice = createSlice({
   },
 });
 
-export const { 
-  setProfileInfo, 
-  setPhysicalInfo, 
-  setGoalsAndLevel, 
-  setMedicalAndTargetInfo, 
-  setLifestyleInfo, 
-  resetRegistration 
+export const {
+  setProfileInfo,
+  setPhysicalInfo,
+  setGoalsAndLevel,
+  setMedicalAndTargetInfo,
+  setLifestyleInfo,
+  resetRegistration
 } = authSlice.actions;
 
 export default authSlice.reducer;

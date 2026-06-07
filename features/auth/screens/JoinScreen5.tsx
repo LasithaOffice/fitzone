@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, ScrollView } from 'react-native'
+import { View, TouchableOpacity, ScrollView, Modal, ActivityIndicator } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import RegistrationWrapper from '../components/RegistrationWrapper'
 import { Text } from '@/components/ui/text'
@@ -6,13 +6,14 @@ import * as Haptics from 'expo-haptics'
 import { router } from 'expo-router'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { registerUser, setLifestyleInfo, resetRegistration } from '@/store/authSlice'
-import { 
-  COMP_BACKGROUND_COLOR, 
-  COMP_BACKGROUND_COLOR_SELECTED, 
-  COMP_BORDER_COLOR, 
-  COMP_BORDER_COLOR_SELECTED, 
-  GRAY, 
-  TEXT_PRIMARY 
+import { fetchPlan } from '@/store/planSlice'
+import {
+  COMP_BACKGROUND_COLOR,
+  COMP_BACKGROUND_COLOR_SELECTED,
+  COMP_BORDER_COLOR,
+  COMP_BORDER_COLOR_SELECTED,
+  GRAY,
+  TEXT_PRIMARY
 } from '@/constants/colors'
 
 const frequencyOptions = ['Rarely', '1-2 days/week', '3-4 days/week', '5+ days/week'];
@@ -22,12 +23,16 @@ const occupationOptions = ['Sedentary (Desk Job)', 'Moderately Active (Walking/S
 
 const JoinScreen5 = () => {
   const dispatch = useAppDispatch();
-  const { loading, error, registrationSuccess } = useAppSelector((state) => state.auth);
+  const { loading, error } = useAppSelector((state) => state.auth);
 
   const [selectedFreq, setSelectedFreq] = useState<string>('');
   const [selectedDur, setSelectedDur] = useState<string>('');
   const [selectedSleep, setSelectedSleep] = useState<string>('');
   const [selectedOcc, setSelectedOcc] = useState<string>('');
+
+  const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const [statusText, setStatusText] = useState<string>('');
+  const [localError, setLocalError] = useState<string | null>(null);
 
   const [validationErrors, setValidationErrors] = useState<{
     freq?: string;
@@ -36,14 +41,7 @@ const JoinScreen5 = () => {
     occ?: string;
   }>({});
 
-  useEffect(() => {
-    if (registrationSuccess) {
-      dispatch(resetRegistration());
-      router.replace('/(tabs)');
-    }
-  }, [registrationSuccess, dispatch]);
-
-  const continueProcess = () => {
+  const continueProcess = async () => {
     const newErrors: typeof validationErrors = {};
 
     if (!selectedFreq) newErrors.freq = "Please select your workout frequency.";
@@ -57,18 +55,78 @@ const JoinScreen5 = () => {
       return;
     }
 
-    // Dispatch details to store
-    dispatch(
-      setLifestyleInfo({
-        workoutFrequency: selectedFreq,
-        workoutDuration: selectedDur,
-        sleepDuration: selectedSleep.split(' ')[0], // Extract number, e.g. "7" from "7-8 hours"
-        occupationType: selectedOcc,
-      })
-    );
+    const lifestyleData = {
+      workoutFrequency: selectedFreq,
+      workoutDuration: selectedDur,
+      sleepDuration: selectedSleep.split(' ')[0], // Extract number, e.g. "7" from "7-8 hours"
+      occupationType: selectedOcc,
+    };
 
-    // Trigger final backend submit
-    dispatch(registerUser());
+    // Dispatch details to store
+    dispatch(setLifestyleInfo(lifestyleData));
+
+    // Open generating popup
+    setIsGenerating(true);
+    setStatusText('Creating your user profile...');
+    setLocalError(null);
+
+    try {
+      // 1. Register User
+      const registerResult = await dispatch(registerUser()).unwrap();
+
+      // Update status text with brief artificial delay for visual feedback
+      setStatusText('Crafting your personalized workout split...');
+      await new Promise(resolve => setTimeout(resolve, 800));
+
+      setStatusText('Optimizing your meal macros...');
+
+      // 2. Prepare profile payload for plan generation
+      const profilePayload = {
+        fullName: registerResult.user?.fullName || 'Alex',
+        birthday: registerResult.user?.birthday || '1995-01-01',
+        gender: registerResult.user?.gender || 'male',
+        weight: registerResult.user?.weight || { value: 75, unit: 'kg' },
+        height: registerResult.user?.height || { value: 180, unit: 'cm' },
+        fitnessLevel: registerResult.user?.fitnessLevel || 'Intermediate',
+        goal: registerResult.user?.goal || 'Build Muscle',
+        allergies: registerResult.user?.allergies || [],
+        chronicConditions: registerResult.user?.chronicConditions || [],
+        injuryHistory: registerResult.user?.injuryHistory || '',
+        targetWeight: registerResult.user?.targetWeight || { value: 70, unit: 'kg' },
+        workoutFrequency: lifestyleData.workoutFrequency,
+        workoutDuration: lifestyleData.workoutDuration,
+        sleepDuration: parseFloat(lifestyleData.sleepDuration) || 8,
+        occupationType: lifestyleData.occupationType,
+        forceRegenerate: true, // Force new plan generation on onboarding submit
+      };
+
+      // 3. Request plans from Express backend
+      const planResult = await dispatch(fetchPlan(profilePayload)).unwrap();
+
+      console.log("prrrrrrr ", planResult)
+
+      // Verify we received a valid plan
+      if (!planResult || !planResult.workoutPlan || planResult.workoutPlan.length === 0) {
+        throw new Error('Plan generation returned an empty workout plan.');
+      }
+
+      setStatusText('Plans created successfully! Welcome aboard!');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      setIsGenerating(false);
+      dispatch(resetRegistration());
+      router.replace('/(tabs)');
+    } catch (err: any) {
+      console.error('Registration/Plan generation flow failed:', err);
+      setIsGenerating(false);
+      dispatch(resetRegistration());
+      const errorMessage = typeof err === 'string'
+        ? err
+        : (err?.message || 'Failed to create your account and generate fitness plans. Please try again.');
+      setLocalError(errorMessage);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    }
   };
 
   return (
@@ -84,10 +142,10 @@ const JoinScreen5 = () => {
     >
       <ScrollView showsVerticalScrollIndicator={false} className="mt-5 mb-5">
         <View className="w-full items-start mt-4 pb-10">
-          
-          {error && (
+
+          {(localError || error) && (
             <View className='bg-red-500/10 border border-red-500/30 p-3 rounded-lg mb-4 w-full'>
-              <Text className='text-red-500 text-sm text-center'>{error}</Text>
+              <Text className='text-red-500 text-sm text-center'>{localError || error}</Text>
             </View>
           )}
 
@@ -233,6 +291,22 @@ const JoinScreen5 = () => {
 
         </View>
       </ScrollView>
+
+      <Modal
+        transparent
+        visible={isGenerating}
+        animationType="fade"
+      >
+        <View className="flex-1 bg-black/85 justify-center items-center px-6">
+          <View className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 w-full items-center shadow-2xl">
+            <ActivityIndicator size="large" color="#9fd101" className="mb-6" />
+            <Text className="text-white text-lg font-bold text-center mb-2">Creating your Fitness Plan</Text>
+            <Text className="text-gray-400 text-sm text-center px-4 leading-relaxed">
+              {statusText}
+            </Text>
+          </View>
+        </View>
+      </Modal>
     </RegistrationWrapper>
   )
 }
