@@ -264,7 +264,7 @@ export const fetchPlan = createAsyncThunk(
   'plan/fetchPlan',
   async (userProfile: Record<string, unknown>, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post('/auth/generate-plan', userProfile);
+      const response = await apiClient.post('/plans/generate', userProfile);
       return response.data;
     } catch (error: any) {
       console.warn('Failed to fetch plan from backend server, using pre-populated plan:', error.message);
@@ -277,11 +277,10 @@ export const logWorkoutSet = createAsyncThunk(
   'plan/logWorkoutSet',
   async (payload: { date: string; day: string; exerciseName: string; setIndex: number; completed: boolean }) => {
     try {
-      await aiApiClient.post('/workout/log', {
+      await apiClient.post('/logs/workout', {
         date: payload.date,
-        day: payload.day,
         exerciseName: payload.exerciseName,
-        setNumber: payload.setIndex + 1,
+        setNumber: payload.setIndex, // Passed directly as 1-indexed set number
         completed: payload.completed,
       });
     } catch (error: any) {
@@ -295,7 +294,11 @@ export const logMeal = createAsyncThunk(
   'plan/logMeal',
   async (payload: { date: string; day: string; mealName: string; consumed: boolean }) => {
     try {
-      await aiApiClient.post('/meal/log', payload);
+      await apiClient.post('/logs/meal', {
+        date: payload.date,
+        mealName: payload.mealName,
+        consumed: payload.consumed,
+      });
     } catch (error: any) {
       console.warn('Failed to log meal on server:', error.message);
     }
@@ -315,11 +318,19 @@ const planSlice = createSlice({
         mlOutputs: MlOutputs;
         workoutPlan: WorkoutDay[];
         mealPlan: MealDay[];
+        workoutTracking?: WorkoutTracking;
+        mealTracking?: MealTracking;
       }>
     ) => {
       state.mlOutputs = action.payload.mlOutputs;
       state.workoutPlan = action.payload.workoutPlan;
       state.mealPlan = action.payload.mealPlan;
+      if (action.payload.workoutTracking) {
+        state.workoutTracking = action.payload.workoutTracking;
+      }
+      if (action.payload.mealTracking) {
+        state.mealTracking = action.payload.mealTracking;
+      }
       state.error = null;
     },
     toggleSetCompletionLocal: (

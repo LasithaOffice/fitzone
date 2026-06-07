@@ -22,6 +22,11 @@ const Workouts = () => {
   const dayTracking = workoutTracking[dateKey] ?? {};
 
   const currentDayWorkout = workoutPlan.find((w) => w.day === selectedDay);
+
+  console.log("currentDayWorkout", currentDayWorkout)
+  console.log("dayTracking", dayTracking)
+
+
   const isRestDay = !currentDayWorkout || currentDayWorkout.exercises.length === 0;
 
   // Find the first uncompleted set in the entire workout to mark as "upcoming"
@@ -32,7 +37,7 @@ const Workouts = () => {
   if (currentDayWorkout && !isRestDay) {
     for (const exercise of currentDayWorkout.exercises) {
       const exerciseProgress = dayTracking[exercise.name] ?? {};
-      for (let s = 0; s < exercise.sets; s++) {
+      for (let s = 1; s <= exercise.sets; s++) {
         if (!exerciseProgress[s]) {
           upcomingSetFound = true;
           upcomingExerciseName = exercise.name;
@@ -44,20 +49,41 @@ const Workouts = () => {
     }
   }
 
-  const handleToggleSet = (exerciseName: string, setIndex: number) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+  const handleToggleSet = (exerciseName: string, setNumber: number, totalSets: number) => {
     const exerciseProgress = dayTracking[exerciseName] ?? {};
-    const currentStatus = exerciseProgress[setIndex] ?? false;
+    const currentStatus = exerciseProgress[setNumber] ?? false;
 
-    // Toggle local state
-    dispatch(toggleSetCompletionLocal({ dateKey, exerciseName, setIndex }));
+    if (!currentStatus) {
+      // User wants to mark as completed. Must verify previous set is done.
+      if (setNumber > 1) {
+        const previousSetCompleted = exerciseProgress[setNumber - 1] ?? false;
+        if (!previousSetCompleted) {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+          return;
+        }
+      }
+    } else {
+      // User wants to uncheck. Must verify next set is not done.
+      if (setNumber < totalSets) {
+        const nextSetCompleted = exerciseProgress[setNumber + 1] ?? false;
+        if (nextSetCompleted) {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+          return;
+        }
+      }
+    }
 
-    // Send tracking update to the backend
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+    // Toggle local state (using 1-indexed set number)
+    dispatch(toggleSetCompletionLocal({ dateKey, exerciseName, setIndex: setNumber }));
+
+    // Send tracking update to the backend (passed as 1-indexed to logs API)
     dispatch(logWorkoutSet({
       date: dateKey,
       day: selectedDay,
       exerciseName,
-      setIndex,
+      setIndex: setNumber,
       completed: !currentStatus
     }));
   };
@@ -191,13 +217,13 @@ const Workouts = () => {
                   {/* Horizontal set tracking checkboxes */}
                   <View className="flex-row justify-between items-center gap-2">
                     {Array.from({ length: exercise.sets }).map((_, index) => {
-                      const isSetCompleted = exerciseProgress[index] ?? false;
-                      const isUpcoming = upcomingSetFound && upcomingExerciseName === exercise.name && upcomingSetIndex === index;
+                      const isSetCompleted = exerciseProgress[index + 1] ?? false;
+                      const isUpcoming = upcomingSetFound && upcomingExerciseName === exercise.name && upcomingSetIndex === index + 1;
 
                       return (
                         <TouchableOpacity
                           key={index}
-                          onPress={() => handleToggleSet(exercise.name, index)}
+                          onPress={() => handleToggleSet(exercise.name, index + 1, exercise.sets)}
                           className="flex-1 py-2 rounded-lg border items-center justify-center relative transition-all duration-300"
                           style={{
                             backgroundColor: isSetCompleted ? PRIMARY : (isUpcoming ? 'rgba(159, 209, 1, 0.1)' : 'rgba(255,255,255,0.02)'),

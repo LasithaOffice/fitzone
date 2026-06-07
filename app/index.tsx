@@ -83,6 +83,8 @@ export default function Screen() {
               mlOutputs: userProfile.mlOutputs,
               workoutPlan: userProfile.workoutPlan,
               mealPlan: userProfile.mealPlan,
+              workoutTracking: userProfile.workoutLog,
+              mealTracking: userProfile.mealLog,
             }));
           }
 
