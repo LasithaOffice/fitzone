@@ -203,6 +203,48 @@ const authSlice = createSlice({
       state.error = null;
       state.loading = false;
     },
+    setUserProfile: (state, action: PayloadAction<any>) => {
+      const u = action.payload;
+      if (u) {
+        state.fullName = u.fullName || '';
+        state.birthday = u.birthday || '';
+        state.gender = u.gender || 'male';
+        state.weightValue = u.weight?.value?.toString() || '';
+        state.weightUnit = u.weight?.unit || 'kg';
+        state.heightValue = u.height?.value?.toString() || '';
+        state.heightUnit = u.height?.unit || 'cm';
+        state.fitnessLevel = u.fitnessLevel || '';
+        state.goal = u.goal || '';
+        state.allergies = u.allergies || [];
+        state.chronicConditions = u.chronicConditions || [];
+        state.injuryHistory = u.injuryHistory || '';
+        state.targetWeightValue = u.targetWeight?.value?.toString() || '';
+        state.targetWeightUnit = u.targetWeight?.unit || 'kg';
+        state.workoutFrequency = u.workoutFrequency || '';
+        state.workoutDuration = u.workoutDuration || '';
+        state.sleepDuration = u.sleepDuration?.toString() || '';
+        state.occupationType = u.occupationType || '';
+      }
+    },
+    restoreOnboardingState: (state, action: PayloadAction<any>) => {
+      const s = action.payload;
+      if (s) {
+        if (s.fullName !== undefined) state.fullName = s.fullName;
+        if (s.birthday !== undefined) state.birthday = s.birthday;
+        if (s.gender !== undefined) state.gender = s.gender;
+        if (s.weightValue !== undefined) state.weightValue = s.weightValue;
+        if (s.weightUnit !== undefined) state.weightUnit = s.weightUnit;
+        if (s.heightValue !== undefined) state.heightValue = s.heightValue;
+        if (s.heightUnit !== undefined) state.heightUnit = s.heightUnit;
+        if (s.fitnessLevel !== undefined) state.fitnessLevel = s.fitnessLevel;
+        if (s.goal !== undefined) state.goal = s.goal;
+        if (s.allergies !== undefined) state.allergies = s.allergies;
+        if (s.chronicConditions !== undefined) state.chronicConditions = s.chronicConditions;
+        if (s.injuryHistory !== undefined) state.injuryHistory = s.injuryHistory;
+        if (s.targetWeightValue !== undefined) state.targetWeightValue = s.targetWeightValue;
+        if (s.targetWeightUnit !== undefined) state.targetWeightUnit = s.targetWeightUnit;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -243,7 +285,9 @@ export const {
   setGoalsAndLevel,
   setMedicalAndTargetInfo,
   setLifestyleInfo,
-  resetRegistration
+  resetRegistration,
+  setUserProfile,
+  restoreOnboardingState
 } = authSlice.actions;
 
 export default authSlice.reducer;

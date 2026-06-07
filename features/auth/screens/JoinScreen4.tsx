@@ -8,6 +8,7 @@ import { router } from 'expo-router'
 import useFormInputWithDropdown, { SelectItem } from '@/components/ui/custom/FormInputWithDropdown'
 import { useAppDispatch } from '@/store'
 import { setMedicalAndTargetInfo } from '@/store/authSlice'
+import { saveLocalOnboardingState } from '@/lib/onboardingStore'
 import {
   COMP_BACKGROUND_COLOR,
   COMP_BACKGROUND_COLOR_SELECTED,
@@ -90,16 +91,17 @@ const JoinScreen4 = () => {
       return;
     }
 
+    const medicalData = {
+      allergies: selectedAllergies.filter(x => x !== 'None'),
+      chronicConditions: selectedConditions.filter(x => x !== 'None'),
+      injuryHistory: injuryHistory.trim(),
+      targetWeightValue: targetWeight.value || '',
+      targetWeightUnit: targetWeight.selected,
+    };
+
     // Save info in Redux store
-    dispatch(
-      setMedicalAndTargetInfo({
-        allergies: selectedAllergies.filter(x => x !== 'None'),
-        chronicConditions: selectedConditions.filter(x => x !== 'None'),
-        injuryHistory: injuryHistory.trim(),
-        targetWeightValue: targetWeight.value || '',
-        targetWeightUnit: targetWeight.selected,
-      })
-    );
+    dispatch(setMedicalAndTargetInfo(medicalData));
+    saveLocalOnboardingState(medicalData);
 
     router.push('/(auth)/join5');
   };

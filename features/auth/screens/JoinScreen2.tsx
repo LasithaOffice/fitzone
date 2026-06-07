@@ -7,6 +7,7 @@ import { router } from 'expo-router'
 import useFormInputWithDropdown, { SelectItem } from '@/components/ui/custom/FormInputWithDropdown'
 import { useAppDispatch } from '@/store';
 import { setPhysicalInfo } from '@/store/authSlice';
+import { saveLocalOnboardingState } from '@/lib/onboardingStore';
 
 const weightUnits: SelectItem[] = [
   { label: 'Kg', value: 'kg' },
@@ -59,15 +60,16 @@ const JoinScreen2 = () => {
       return;
     }
 
+    const physicalData = {
+      weightValue: weight.value || '',
+      weightUnit: weight.selected,
+      heightValue: height.value || '',
+      heightUnit: height.selected,
+    };
+
     // Dispatch physical metrics to Redux store
-    dispatch(
-      setPhysicalInfo({
-        weightValue: weight.value || '',
-        weightUnit: weight.selected,
-        heightValue: height.value || '',
-        heightUnit: height.selected,
-      })
-    );
+    dispatch(setPhysicalInfo(physicalData));
+    saveLocalOnboardingState(physicalData);
 
     router.push('/(auth)/join3');
   }

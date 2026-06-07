@@ -8,6 +8,7 @@ import { router } from 'expo-router'
 import ItemBox from '../components/ItemBox'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { setGoalsAndLevel } from '@/store/authSlice'
+import { saveLocalOnboardingState } from '@/lib/onboardingStore'
 
 export type Levels = {
   icon: any,
@@ -78,12 +79,14 @@ const JoinScreen3 = () => {
   const [selectedGoal, setSelectedGoal] = useState<Levels>(goals[0]);
 
   const continueProcess = () => {
-    dispatch(
-      setGoalsAndLevel({
-        fitnessLevel: selectedFitnessLevel.title.replace(/\n/g, ' '),
-        goal: selectedGoal.title.replace(/\n/g, ' '),
-      })
-    );
+    const goalsData = {
+      fitnessLevel: selectedFitnessLevel.title.replace(/\n/g, ' '),
+      goal: selectedGoal.title.replace(/\n/g, ' '),
+    };
+
+    dispatch(setGoalsAndLevel(goalsData));
+    saveLocalOnboardingState(goalsData);
+
     router.push('/(auth)/join4');
   }
 

@@ -7,6 +7,7 @@ import { router } from 'expo-router'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { registerUser, setLifestyleInfo, resetRegistration } from '@/store/authSlice'
 import { fetchPlan } from '@/store/planSlice'
+import { saveOnboardingCompleted, clearLocalOnboardingState } from '@/lib/onboardingStore'
 import {
   COMP_BACKGROUND_COLOR,
   COMP_BACKGROUND_COLOR_SELECTED,
@@ -113,6 +114,10 @@ const JoinScreen5 = () => {
       setStatusText('Plans created successfully! Welcome aboard!');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Save onboarding completion status & clear temporary state
+      await saveOnboardingCompleted(true);
+      await clearLocalOnboardingState();
 
       setIsGenerating(false);
       dispatch(resetRegistration());

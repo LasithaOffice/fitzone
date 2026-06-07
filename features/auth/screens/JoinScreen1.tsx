@@ -15,6 +15,7 @@ import { KeyboardAwareScrollView, KeyboardToolbar } from 'react-native-keyboard-
 import { router } from 'expo-router'
 import { useAppDispatch } from '@/store';
 import { setProfileInfo } from '@/store/authSlice';
+import { saveLocalOnboardingState } from '@/lib/onboardingStore';
 
 
 const JoinScreen1 = () => {
@@ -75,14 +76,15 @@ const JoinScreen1 = () => {
       return;
     }
 
+    const profileData = {
+      fullName: fullName.trim(),
+      birthday: date.toISOString().split('T')[0],
+      gender: value,
+    };
+
     // Dispatch profile information to global store
-    dispatch(
-      setProfileInfo({
-        fullName: fullName.trim(),
-        birthday: date.toISOString().split('T')[0],
-        gender: value,
-      })
-    );
+    dispatch(setProfileInfo(profileData));
+    saveLocalOnboardingState(profileData);
 
     router.push('/(auth)/join2');
   };

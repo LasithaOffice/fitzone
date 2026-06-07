@@ -12,9 +12,14 @@ import { GoogleAuthProvider, getAuth, signInWithCredential } from '@react-native
 import { router } from 'expo-router'
 import apiClient from '@/lib/apiClient'
 import * as tokenStore from '@/lib/tokenStore'
+import { useAppDispatch } from '@/store'
+import { setUserProfile } from '@/store/authSlice'
+import { setPlan } from '@/store/planSlice'
+import { saveOnboardingCompleted, clearLocalOnboardingState } from '@/lib/onboardingStore'
 
 
 const LoginScreen = () => {
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -54,26 +59,80 @@ const LoginScreen = () => {
 
       console.log('Sending social login data to backend:', { email, createdAt, socialProvider });
 
+      let loggedInUser = null;
       try {
         const response = await apiClient.post('/auth/social-login', {
           email,
           createdAt,
           socialProvider
         });
-        const { accessToken, refreshToken } = response.data;
+        const { accessToken, refreshToken, user } = response.data;
         await tokenStore.setTokens(accessToken, refreshToken);
+        loggedInUser = user;
       } catch (apiError: any) {
         console.warn('Network error or API offline. Simulating local token storage:', apiError.message);
         await tokenStore.setTokens('mock-access-token', 'mock-refresh-token');
       }
 
       setGoogleSignIn(false);
-      router.replace('/(auth)/join1');
+
+      if (loggedInUser) {
+        dispatch(setUserProfile(loggedInUser));
+
+        if (loggedInUser.workoutPlan && loggedInUser.workoutPlan.length > 0) {
+          dispatch(setPlan({
+            mlOutputs: loggedInUser.mlOutputs,
+            workoutPlan: loggedInUser.workoutPlan,
+            mealPlan: loggedInUser.mealPlan,
+          }));
+        }
+
+        const isOnboardingComplete = 
+          loggedInUser.workoutFrequency || 
+          (loggedInUser.workoutPlan && loggedInUser.workoutPlan.length > 0);
+
+        if (isOnboardingComplete) {
+          console.log('User logged in. Onboarding completed. Routing to tabs.');
+          await saveOnboardingCompleted(true);
+          await clearLocalOnboardingState();
+          router.replace('/(tabs)');
+        } else {
+          const nextRoute = determineNextOnboardingRoute(loggedInUser);
+          console.log('User logged in. Onboarding incomplete. Routing to:', nextRoute);
+          router.replace(nextRoute as any);
+        }
+      } else {
+        router.replace('/(auth)/join1');
+      }
     } catch (err: any) {
       console.error('Google Sign-In failed:', err);
       setGoogleSignIn(false);
     }
   }
+
+  const determineNextOnboardingRoute = (state: any) => {
+    const fullName = state.fullName;
+    const birthday = state.birthday;
+    const weightVal = state.weightValue || (state.weight && state.weight.value);
+    const heightVal = state.heightValue || (state.height && state.height.value);
+    const fitnessLevel = state.fitnessLevel;
+    const goal = state.goal;
+    const targetWeightVal = state.targetWeightValue || (state.targetWeight && state.targetWeight.value);
+
+    if (!fullName || !birthday) {
+      return '/(auth)/join1';
+    }
+    if (!weightVal || !heightVal) {
+      return '/(auth)/join2';
+    }
+    if (!fitnessLevel || !goal) {
+      return '/(auth)/join3';
+    }
+    if (!targetWeightVal) {
+      return '/(auth)/join4';
+    }
+    return '/(auth)/join5';
+  };
 
   return (
     <ViewBox base>
