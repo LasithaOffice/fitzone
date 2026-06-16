@@ -8,26 +8,26 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		2BE139F1F4E7570F4D81EE67 /* Pods_Fitzone.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DA69F65701F37958D00EEDB /* Pods_Fitzone.framework */; };
-		38D93B78CFF20B637C37C1F0 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 21008A25DF17E1D3C7C3722C /* PrivacyInfo.xcprivacy */; };
+		299E33BE52CE44BFB88D2307 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 289AB7D53BBD4F928683603C /* GoogleService-Info.plist */; };
+		2F7398782294FE9DD1510220 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23183A1E51A8498EE1A1E727 /* ExpoModulesProvider.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		87B04CE4BE9F4009920D3378 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 01B8882C35F8414EB957CB60 /* GoogleService-Info.plist */; };
-		B2DA683F270DD1A7458ED8F7 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D15D675E6527C76C14A4CB /* ExpoModulesProvider.swift */; };
+		AE4B178B5E61095A37533B1B /* Pods_Fitzone.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ACB276D9119527F4C542EEE8 /* Pods_Fitzone.framework */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
+		C79D3D45AC8F9B0815C1E676 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 08354FC17869142ECAB767C9 /* PrivacyInfo.xcprivacy */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		01B8882C35F8414EB957CB60 /* GoogleService-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Fitzone/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		08354FC17869142ECAB767C9 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Fitzone/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Fitzone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fitzone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Fitzone/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Fitzone/Info.plist; sourceTree = "<group>"; };
-		21008A25DF17E1D3C7C3722C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Fitzone/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		45740D376714C7F42C1B7EA9 /* Pods-Fitzone.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Fitzone.debug.xcconfig"; path = "Target Support Files/Pods-Fitzone/Pods-Fitzone.debug.xcconfig"; sourceTree = "<group>"; };
-		4DA69F65701F37958D00EEDB /* Pods_Fitzone.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Fitzone.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A2CB84B9CCF4391F7B4CA305 /* Pods-Fitzone.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Fitzone.release.xcconfig"; path = "Target Support Files/Pods-Fitzone/Pods-Fitzone.release.xcconfig"; sourceTree = "<group>"; };
+		224633EDE6D037AF1671C935 /* Pods-Fitzone.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Fitzone.debug.xcconfig"; path = "Target Support Files/Pods-Fitzone/Pods-Fitzone.debug.xcconfig"; sourceTree = "<group>"; };
+		23183A1E51A8498EE1A1E727 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Fitzone/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		289AB7D53BBD4F928683603C /* GoogleService-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Fitzone/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		9C5FB7C089DB2F4F91E32831 /* Pods-Fitzone.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Fitzone.release.xcconfig"; path = "Target Support Files/Pods-Fitzone/Pods-Fitzone.release.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Fitzone/SplashScreen.storyboard; sourceTree = "<group>"; };
-		B8D15D675E6527C76C14A4CB /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Fitzone/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		ACB276D9119527F4C542EEE8 /* Pods_Fitzone.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Fitzone.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Fitzone/AppDelegate.swift; sourceTree = "<group>"; };
@@ -39,7 +39,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2BE139F1F4E7570F4D81EE67 /* Pods_Fitzone.framework in Frameworks */,
+				AE4B178B5E61095A37533B1B /* Pods_Fitzone.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -55,27 +55,27 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				01B8882C35F8414EB957CB60 /* GoogleService-Info.plist */,
-				21008A25DF17E1D3C7C3722C /* PrivacyInfo.xcprivacy */,
+				289AB7D53BBD4F928683603C /* GoogleService-Info.plist */,
+				08354FC17869142ECAB767C9 /* PrivacyInfo.xcprivacy */,
 			);
 			name = Fitzone;
-			sourceTree = "<group>";
-		};
-		2B3633F3F73DA439FAA782BD /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				A5B8E8F7D6EACF1EF5D28ABA /* Fitzone */,
-			);
-			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				4DA69F65701F37958D00EEDB /* Pods_Fitzone.framework */,
+				ACB276D9119527F4C542EEE8 /* Pods_Fitzone.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		514EA9F9A7CA8F3F2D8B98CE /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				E81696D210410E29DCF91D14 /* Fitzone */,
+			);
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -92,8 +92,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				A167B0B2D80648D60691F032 /* Pods */,
-				2B3633F3F73DA439FAA782BD /* ExpoModulesProviders */,
+				C24C040BC48ADF07B57FD170 /* Pods */,
+				514EA9F9A7CA8F3F2D8B98CE /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -108,24 +108,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		A167B0B2D80648D60691F032 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				45740D376714C7F42C1B7EA9 /* Pods-Fitzone.debug.xcconfig */,
-				A2CB84B9CCF4391F7B4CA305 /* Pods-Fitzone.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
-			sourceTree = "<group>";
-		};
-		A5B8E8F7D6EACF1EF5D28ABA /* Fitzone */ = {
-			isa = PBXGroup;
-			children = (
-				B8D15D675E6527C76C14A4CB /* ExpoModulesProvider.swift */,
-			);
-			name = Fitzone;
-			sourceTree = "<group>";
-		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
@@ -133,6 +115,24 @@
 			);
 			name = Supporting;
 			path = Fitzone/Supporting;
+			sourceTree = "<group>";
+		};
+		C24C040BC48ADF07B57FD170 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				224633EDE6D037AF1671C935 /* Pods-Fitzone.debug.xcconfig */,
+				9C5FB7C089DB2F4F91E32831 /* Pods-Fitzone.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		E81696D210410E29DCF91D14 /* Fitzone */ = {
+			isa = PBXGroup;
+			children = (
+				23183A1E51A8498EE1A1E727 /* ExpoModulesProvider.swift */,
+			);
+			name = Fitzone;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -143,14 +143,14 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Fitzone" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				90BFE06A483A80550FF6E935 /* [Expo] Configure project */,
+				0568EE69364702D356796E94 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				AD52B9470624A5F13C015A66 /* [CP] Embed Pods Frameworks */,
-				FEE0D9B309451A3CE7964DE3 /* [CP-User] [RNFB] Core Configuration */,
+				8C3639461FCAF3FD7681B033 /* [CP] Embed Pods Frameworks */,
+				C81DFA57B6099A920B44755A /* [CP-User] [RNFB] Core Configuration */,
 			);
 			buildRules = (
 			);
@@ -200,8 +200,8 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				87B04CE4BE9F4009920D3378 /* GoogleService-Info.plist in Resources */,
-				38D93B78CFF20B637C37C1F0 /* PrivacyInfo.xcprivacy in Resources */,
+				299E33BE52CE44BFB88D2307 /* GoogleService-Info.plist in Resources */,
+				C79D3D45AC8F9B0815C1E676 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,6 +224,30 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [[ -f \"$PODS_ROOT/../.xcode.env\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env\"\nfi\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n# The project root by default is one level up from the ios directory\nexport PROJECT_ROOT=\"$PROJECT_DIR\"/..\n\nif [[ \"$CONFIGURATION\" = *Debug* ]]; then\n  export SKIP_BUNDLING=1\nfi\nif [[ -z \"$ENTRY_FILE\" ]]; then\n  # Set the entry JS file using the bundler's entry resolution.\n  export ENTRY_FILE=\"$(\"$NODE_BINARY\" -e \"require('expo/scripts/resolveAppEntry')\" \"$PROJECT_ROOT\" ios absolute | tail -n 1)\"\nfi\n\nif [[ -z \"$CLI_PATH\" ]]; then\n  # Use Expo CLI\n  export CLI_PATH=\"$(\"$NODE_BINARY\" --print \"require.resolve('@expo/cli', { paths: [require.resolve('expo/package.json')] })\")\"\nfi\nif [[ -z \"$BUNDLE_COMMAND\" ]]; then\n  # Default Expo CLI command for bundling\n  export BUNDLE_COMMAND=\"export:embed\"\nfi\n\n# Source .xcode.env.updates if it exists to allow\n# SKIP_BUNDLING to be unset if needed\nif [[ -f \"$PODS_ROOT/../.xcode.env.updates\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.updates\"\nfi\n# Source local changes to allow overrides\n# if needed\nif [[ -f \"$PODS_ROOT/../.xcode.env.local\" ]]; then\n  source \"$PODS_ROOT/../.xcode.env.local\"\nfi\n\n`\"$NODE_BINARY\" --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\"`\n\n";
+		};
+		0568EE69364702D356796E94 /* [Expo] Configure project */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/.xcode.env",
+				"$(SRCROOT)/.xcode.env.local",
+				"$(SRCROOT)/Fitzone/Fitzone.entitlements",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-Fitzone/expo-configure-project.sh",
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/Pods/Target Support Files/Pods-Fitzone/ExpoModulesProvider.swift",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-Fitzone/expo-configure-project.sh\"\n";
 		};
 		08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -305,31 +329,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Fitzone/Pods-Fitzone-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		90BFE06A483A80550FF6E935 /* [Expo] Configure project */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/.xcode.env",
-				"$(SRCROOT)/.xcode.env.local",
-				"$(SRCROOT)/Fitzone/Fitzone.entitlements",
-				"$(SRCROOT)/Pods/Target Support Files/Pods-Fitzone/expo-configure-project.sh",
-			);
-			name = "[Expo] Configure project";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(SRCROOT)/Pods/Target Support Files/Pods-Fitzone/ExpoModulesProvider.swift",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-Fitzone/expo-configure-project.sh\"\n";
-		};
-		AD52B9470624A5F13C015A66 /* [CP] Embed Pods Frameworks */ = {
+		8C3639461FCAF3FD7681B033 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -351,7 +351,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Fitzone/Pods-Fitzone-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		FEE0D9B309451A3CE7964DE3 /* [CP-User] [RNFB] Core Configuration */ = {
+		C81DFA57B6099A920B44755A /* [CP-User] [RNFB] Core Configuration */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -372,7 +372,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				B2DA683F270DD1A7458ED8F7 /* ExpoModulesProvider.swift in Sources */,
+				2F7398782294FE9DD1510220 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -381,7 +381,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 45740D376714C7F42C1B7EA9 /* Pods-Fitzone.debug.xcconfig */;
+			baseConfigurationReference = 224633EDE6D037AF1671C935 /* Pods-Fitzone.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -417,7 +417,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A2CB84B9CCF4391F7B4CA305 /* Pods-Fitzone.release.xcconfig */;
+			baseConfigurationReference = 9C5FB7C089DB2F4F91E32831 /* Pods-Fitzone.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

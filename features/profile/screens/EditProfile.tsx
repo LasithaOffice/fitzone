@@ -59,6 +59,7 @@ const EditProfile = () => {
         },
         fitnessLevel,
         goal: selectedGoal,
+        logoUrl: auth.logoUrl,
       }
       await dispatch(updateUserProfileThunk(profilePayload)).unwrap()
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)

@@ -1,4 +1,4 @@
-import { Platform, ScrollView, View } from 'react-native'
+import { Platform, ScrollView, View, TouchableOpacity, ActivityIndicator, Alert } from 'react-native'
 import React, { useState } from 'react'
 import RegistrationWrapper from '../components/RegistrationWrapper'
 import ProfileImage from '@/components/features/ProfileImage'
@@ -7,27 +7,81 @@ import { Input } from "@/components/ui/input"
 import { Button } from '@/components/ui/button'
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { ToggleGroup, ToggleGroupIcon, ToggleGroupItem } from '@/components/ui/toggle-group'
-import { Ionicons, } from '@expo/vector-icons';
+import { Ionicons, Feather } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Bold, Italic, Underline } from 'lucide-react-native'
 import { PRIMARY } from '@/constants/colors'
 import { KeyboardAwareScrollView, KeyboardToolbar } from 'react-native-keyboard-controller';
 import { router } from 'expo-router'
-import { useAppDispatch } from '@/store';
-import { setProfileInfo } from '@/store/authSlice';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { setProfileInfo, setLogoUrl } from '@/store/authSlice';
 import { saveLocalOnboardingState } from '@/lib/onboardingStore';
-
+import * as ImagePicker from 'expo-image-picker'
+import apiClient from '@/lib/apiClient'
 
 const JoinScreen1 = () => {
   const dispatch = useAppDispatch();
+  const auth = useAppSelector(state => state.auth);
 
   const [fullName, setFullName] = useState<string>('');
   const [date, setDate] = useState<Date>(new Date());
   const [show, setShow] = useState<boolean>(false);
   const [opened, setOpened] = useState<boolean>(false);
   const [value, setValue] = React.useState<string>("male");
+  const [uploading, setUploading] = useState<boolean>(false);
 
   const [errors, setErrors] = useState<{ fullName?: string; birthday?: string }>({});
+
+  const handlePickImage = async () => {
+    console.log('JoinScreen1 handlePickImage clicked');
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(e => console.warn('Haptics failed:', e));
+      
+      console.log('Requesting media library permissions in JoinScreen1...');
+      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      console.log('Permission result in JoinScreen1:', permissionResult);
+      
+      if (!permissionResult.granted) {
+        Alert.alert('Permission Required', 'You need to allow media access to upload a profile picture.');
+        return;
+      }
+
+      console.log('Launching image library in JoinScreen1...');
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.6,
+        base64: true,
+      });
+      console.log('Image picker result in JoinScreen1:', result);
+
+      if (result.canceled || !result.assets || result.assets.length === 0) {
+        console.log('Image picker canceled or empty assets in JoinScreen1');
+        return;
+      }
+
+      const base64Str = `data:image/jpeg;base64,${result.assets[0].base64}`;
+      setUploading(true);
+
+      const response = await apiClient.post('/gym/auth/upload', {
+        image: base64Str,
+        type: 'logo'
+      });
+
+      if (response.data?.url) {
+        dispatch(setLogoUrl(response.data.url));
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      } else {
+        throw new Error('No URL returned from server');
+      }
+    } catch (err) {
+      console.error('Image upload failed in JoinScreen1:', err);
+      Alert.alert('Upload Failed', 'Could not upload your profile image. Please try again.');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     // Android requires manual closing after selection
@@ -97,7 +151,35 @@ const JoinScreen1 = () => {
       step={0}
     >
       <View className='items-center mt-5'>
-        <ProfileImage width={96} height={96} />
+        <View style={{ width: 104, height: 104, position: 'relative' }}>
+          <View style={{ position: 'absolute', top: 0, left: 0 }}>
+            <ProfileImage width={96} height={96} />
+          </View>
+          {uploading ? (
+            <View 
+              className="absolute inset-0 bg-black/60 rounded-full items-center justify-center"
+              style={{ width: 100, height: 100, borderRadius: 50 }}
+            >
+              <ActivityIndicator size="small" color={PRIMARY} />
+            </View>
+          ) : (
+            <TouchableOpacity 
+              className="absolute bottom-0 right-0 p-2 rounded-full items-center justify-center border-2 border-black" 
+              style={{ 
+                backgroundColor: PRIMARY,
+                width: 36,
+                height: 36,
+                borderRadius: 18,
+                zIndex: 99,
+                elevation: 5,
+              }}
+              onPress={handlePickImage}
+              activeOpacity={0.7}
+            >
+              <Feather name="camera" size={15} color="black" />
+            </TouchableOpacity>
+          )}
+        </View>
         <Text className='mt-3'>{"Welcome!"} </Text>
         <Text variant={'small'} className='text-center text-gray-300 px-10'>{"You're in. Let's set up your profile."}</Text>
         <View className='w-full items-start mt-6'>

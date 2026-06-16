@@ -22,6 +22,7 @@ export interface AuthState {
   workoutDuration: string;
   sleepDuration: string;
   occupationType: string;
+  logoUrl: string; // User profile photo URL
   loading: boolean;
   error: string | null;
   registrationSuccess: boolean;
@@ -48,32 +49,10 @@ const initialState: AuthState = {
   workoutDuration: '',
   sleepDuration: '',
   occupationType: '',
+  logoUrl: '',
   loading: false,
   error: null,
   registrationSuccess: false,
-
-  // fullName: '',
-  // birthday: '',
-  // gender: 'male',
-  // weightValue: '',
-  // weightUnit: 'kg',
-  // heightValue: '',
-  // heightUnit: 'cm',
-  // fitnessLevel: '',
-  // goal: '',
-  // // New fields initial state
-  // allergies: [],
-  // chronicConditions: [],
-  // injuryHistory: '',
-  // targetWeightValue: '',
-  // targetWeightUnit: 'kg',
-  // workoutFrequency: '',
-  // workoutDuration: '',
-  // sleepDuration: '',
-  // occupationType: '',
-  // loading: false,
-  // error: null,
-  // registrationSuccess: false,
 };
 
 export const registerUser = createAsyncThunk(
@@ -107,6 +86,7 @@ export const registerUser = createAsyncThunk(
         workoutDuration: state.workoutDuration,
         sleepDuration: parseFloat(state.sleepDuration) || 0,
         occupationType: state.occupationType,
+        logoUrl: state.logoUrl,
       };
 
       console.log('Sending registration request to backend:', JSON.stringify(registrationData, null, 2));
@@ -168,11 +148,17 @@ const authSlice = createSlice({
   reducers: {
     setProfileInfo: (
       state,
-      action: PayloadAction<{ fullName: string; birthday: string; gender: string }>
+      action: PayloadAction<{ fullName: string; birthday: string; gender: string; logoUrl?: string }>
     ) => {
       state.fullName = action.payload.fullName;
       state.birthday = action.payload.birthday;
       state.gender = action.payload.gender;
+      if (action.payload.logoUrl !== undefined) {
+        state.logoUrl = action.payload.logoUrl;
+      }
+    },
+    setLogoUrl: (state, action: PayloadAction<string>) => {
+      state.logoUrl = action.payload;
     },
     setPhysicalInfo: (
       state,
@@ -252,6 +238,7 @@ const authSlice = createSlice({
         state.workoutDuration = u.workoutDuration || '';
         state.sleepDuration = u.sleepDuration?.toString() || '';
         state.occupationType = u.occupationType || '';
+        state.logoUrl = u.logoUrl || '';
       }
     },
     restoreOnboardingState: (state, action: PayloadAction<any>) => {
@@ -271,6 +258,7 @@ const authSlice = createSlice({
         if (s.injuryHistory !== undefined) state.injuryHistory = s.injuryHistory;
         if (s.targetWeightValue !== undefined) state.targetWeightValue = s.targetWeightValue;
         if (s.targetWeightUnit !== undefined) state.targetWeightUnit = s.targetWeightUnit;
+        if (s.logoUrl !== undefined) state.logoUrl = s.logoUrl;
       }
     },
   },
@@ -310,6 +298,7 @@ const authSlice = createSlice({
 
 export const {
   setProfileInfo,
+  setLogoUrl,
   setPhysicalInfo,
   setGoalsAndLevel,
   setMedicalAndTargetInfo,

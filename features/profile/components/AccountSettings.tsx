@@ -48,7 +48,13 @@ const AccountSettings = () => {
         </View>
 
         {/* Security */}
-        <TouchableOpacity className="flex-row items-center p-4">
+        <TouchableOpacity 
+          className="flex-row items-center p-4"
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+            router.push('/main/security-privacy')
+          }}
+        >
           <Feather name="shield" size={18} color={GRAY} />
           <Text className="text-white ml-3 flex-1 text-sm font-medium">Security & Privacy</Text>
           <Feather name="chevron-right" size={16} color={GRAY} />

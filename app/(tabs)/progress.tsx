@@ -1,9 +1,9 @@
 import React from 'react'
-import Progress from '@/features/progress/screens/Progress'
+import GymMap from '@/features/home/screens/GymMap'
 
 const progress = () => {
   return (
-    <Progress />
+    <GymMap />
   )
 }
 

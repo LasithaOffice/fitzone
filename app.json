@@ -21,7 +21,16 @@
         "backgroundColor": "#000000"
       },
       "googleServicesFile": "./google-services.json",
-      "package": "com.fitzone.app"
+      "package": "com.fitzone.app",
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.VIBRATE",
+        "android.permission.CAMERA"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -65,6 +74,12 @@
         {
           "iosGoogleMapsApiKey": "[GCP_API_KEY]",
           "androidGoogleMapsApiKey": "[GCP_API_KEY]"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them."
         }
       ]
     ],
