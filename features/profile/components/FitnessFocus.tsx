@@ -3,8 +3,11 @@ import React from 'react'
 import { Text } from '@/components/ui/text'
 import { COMP_BACKGROUND_COLOR, COMP_BORDER_COLOR, PRIMARY } from '@/constants/colors'
 import { FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons'
+import { useAppSelector } from '@/store'
 
 const FitnessFocus = () => {
+  const { goal, fitnessLevel } = useAppSelector(state => state.auth)
+
   return (
     <View className="flex-row mx-4 mt-3 gap-3">
       <View className="flex-1 p-4 rounded-xl border flex-row items-center gap-3" style={{ backgroundColor: COMP_BACKGROUND_COLOR, borderColor: COMP_BORDER_COLOR }}>
@@ -13,7 +16,7 @@ const FitnessFocus = () => {
         </View>
         <View className="flex-1">
           <Text className="text-[10px] text-gray-500 uppercase font-semibold">Goal</Text>
-          <Text className="text-white font-bold text-sm mt-0.5">Build Muscle</Text>
+          <Text className="text-white font-bold text-sm mt-0.5">{goal || 'N/A'}</Text>
         </View>
       </View>
 
@@ -23,7 +26,7 @@ const FitnessFocus = () => {
         </View>
         <View className="flex-1">
           <Text className="text-[10px] text-gray-500 uppercase font-semibold">Level</Text>
-          <Text className="text-white font-bold text-sm mt-0.5">Intermediate</Text>
+          <Text className="text-white font-bold text-sm mt-0.5">{fitnessLevel || 'N/A'}</Text>
         </View>
       </View>
     </View>

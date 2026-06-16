@@ -1,5 +1,5 @@
 import { ScrollView } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import ProfileHeader from '../components/ProfileHeader'
 import UserInfo from '../components/UserInfo'
@@ -9,8 +9,15 @@ import AccountSettings from '../components/AccountSettings'
 import FitnessPreferences from '../components/FitnessPreferences'
 import SupportLegal from '../components/SupportLegal'
 import LogOutButton from '../components/LogOutButton'
+import { useAppDispatch } from '@/store'
+import { fetchUserProfileThunk } from '@/store/authSlice'
 
 const Profile = () => {
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    dispatch(fetchUserProfileThunk())
+  }, [dispatch])
   return (
     <SafeAreaView className="flex-1 bg-black">
       <ProfileHeader />

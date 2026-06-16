@@ -136,6 +136,32 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+export const updateUserProfileThunk = createAsyncThunk(
+  'auth/updateUserProfile',
+  async (profileData: any, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await apiClient.put('/auth/profile', profileData);
+      dispatch(setUserProfile(response.data.user));
+      return response.data.user;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to update profile');
+    }
+  }
+);
+
+export const fetchUserProfileThunk = createAsyncThunk(
+  'auth/fetchUserProfile',
+  async (_, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await apiClient.get('/auth/profile');
+      dispatch(setUserProfile(response.data));
+      return response.data;
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to fetch profile');
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,

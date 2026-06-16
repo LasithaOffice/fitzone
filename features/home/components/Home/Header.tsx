@@ -6,11 +6,17 @@ import NotificationButton from './NotificationButton'
 import { router } from 'expo-router'
 import * as Haptics from 'expo-haptics'
 
+import { useAppSelector } from '@/store'
+
 const Header = () => {
+  const { fullName } = useAppSelector(state => state.auth)
+
   const navigateToProfile = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
     router.push('/(tabs)/profile')
   }
+
+  const firstName = fullName ? fullName.split(' ')[0] : 'User'
 
   return (
     <View className='flex-row p-3 gap-3 items-center'>
@@ -21,7 +27,7 @@ const Header = () => {
       >
         <ProfileImage width={40} height={40} />
         <View className='flex-1'>
-          <Text className='font-bold text-white'>Hello, Alex! 👋</Text>
+          <Text className='font-bold text-white'>Hello, {firstName}! 👋</Text>
           <Text className='text-gray-300 text-[10px]'>Let's crush your goals today.</Text>
         </View>
       </TouchableOpacity>
