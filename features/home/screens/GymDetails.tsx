@@ -10,16 +10,19 @@ import apiClient from '@/lib/apiClient'
 
 interface GymInfo {
   enrolled: boolean;
+  gymId?: string;
   gymName?: string;
   gymEmail?: string;
   logoUrl?: string;
   images?: string[];
+  branchId?: string;
   branchName?: string;
   branchLocation?: string;
   branchPhone?: string;
   plan?: 'Basic' | 'Premium' | 'VIP';
   status?: 'active' | 'inactive';
   joinedDate?: string;
+  memberCount?: number;
 }
 
 const GymDetails = () => {
@@ -27,6 +30,7 @@ const GymDetails = () => {
   const { branchId } = useLocalSearchParams()
   const [loading, setLoading] = useState(true)
   const [gymDetails, setGymDetails] = useState<GymInfo | null>(null)
+  const [branches, setBranches] = useState<any[]>([])
   const [error, setError] = useState<string | null>(null)
 
   const fetchGymDetails = async () => {
@@ -38,13 +42,16 @@ const GymDetails = () => {
         const data = response.data
         setGymDetails({
           enrolled: false,
+          gymId: data.gymId?._id,
           gymName: data.gymId?.gymName || 'Fitzone Partner',
           gymEmail: data.gymId?.email || '',
           logoUrl: data.gymId?.logoUrl || '',
           images: data.gymId?.images || [],
+          branchId: data._id,
           branchName: data.name,
           branchLocation: data.location,
           branchPhone: data.phone || 'Not Specified',
+          memberCount: data.memberCount,
         })
       } else {
         const response = await apiClient.get('/gym/my-gym')
@@ -54,9 +61,24 @@ const GymDetails = () => {
       console.error(err)
       setError('Could not establish database connection to fetch gym details.')
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
+
+  useEffect(() => {
+    const fetchGymBranches = async () => {
+      if (!gymDetails?.gymId) return
+      try {
+        const response = await apiClient.get(`/gym/public-branches?gymId=${gymDetails.gymId}`)
+        // Filter out the branch currently showing (if we are looking at a public branch detail)
+        const filtered = response.data.filter((b: any) => b._id !== gymDetails.branchId)
+        setBranches(filtered)
+      } catch (err) {
+        console.error('Failed to fetch gym branches:', err)
+      }
+    }
+    fetchGymBranches()
+  }, [gymDetails?.gymId, gymDetails?.branchId])
 
   useEffect(() => {
     fetchGymDetails()
@@ -95,7 +117,7 @@ const GymDetails = () => {
         <TouchableOpacity onPress={() => router.back()} className="p-1">
           <Feather name="arrow-left" size={24} color="#FFF" />
         </TouchableOpacity>
-        <Text className="text-white text-[18px] font-extrabold tracking-wider uppercase">
+        <Text className="text-white text-[18px] font-extrabold tracking-wider">
           {gymDetails?.enrolled ? 'My Gym Terminal' : 'Gym Association'}
         </Text>
         <TouchableOpacity onPress={fetchGymDetails} className="p-1">
@@ -147,6 +169,12 @@ const GymDetails = () => {
                   <Text className="text-white text-[22px] font-extrabold mb-1">
                     {gymDetails.gymName}
                   </Text>
+                  <View className="flex-row items-center mt-1">
+                    <Ionicons name="people" size={14} color={themeAccent} />
+                    <Text className="text-gray-400 text-[12px] font-semibold ml-1">
+                      {gymDetails.memberCount || 0} active members
+                    </Text>
+                  </View>
                 </View>
               </View>
 
@@ -167,94 +195,134 @@ const GymDetails = () => {
                 </Text>
               </View>
 
-            {/* Plan Tier Banner */}
-            <View className="mt-6 pt-5 border-t border-zinc-800/60 flex-row items-center justify-between">
-              <View>
-                <Text className="text-gray-400 text-[12px] uppercase tracking-wider">Subscription Tier</Text>
-                <Text className="text-white text-[16px] font-black">{gymDetails.plan} Plan</Text>
+              {/* Plan Tier Banner */}
+              <View className="mt-6 pt-5 border-t border-zinc-800/60 flex-row items-center justify-between">
+                <View>
+                  <Text className="text-gray-400 text-[12px] uppercase tracking-wider">Subscription Tier</Text>
+                  <Text className="text-white text-[16px] font-black">{gymDetails.plan} Plan</Text>
+                </View>
+                <View
+                  className="w-10 h-10 rounded-full items-center justify-center bg-zinc-900 border"
+                  style={{ borderColor: borderBg }}
+                >
+                  <FontAwesome5
+                    name="medal"
+                    size={16}
+                    color={
+                      gymDetails.plan === 'VIP'
+                        ? '#EAB308' // Gold
+                        : gymDetails.plan === 'Premium'
+                          ? '#A855F7' // Purple
+                          : '#64748B' // Silver
+                    }
+                  />
+                </View>
               </View>
-              <View
-                className="w-10 h-10 rounded-full items-center justify-center bg-zinc-900 border"
+            </View>
+
+            {/* BRANCH INFO CARD */}
+            <Text className="text-gray-400 font-extrabold uppercase tracking-widest text-[11px] mb-2 px-1">
+              Home Branch Details
+            </Text>
+            <View
+              className="p-5 rounded-xl border mb-6"
+              style={{ backgroundColor: cardBg, borderColor: borderBg }}
+            >
+              <View className="flex-row items-center mb-4">
+                <Ionicons name="location-sharp" size={20} color={themeAccent} className="mr-3" />
+                <View className="flex-1 ml-2">
+                  <Text className="text-white text-[16px] font-extrabold">{gymDetails.branchName}</Text>
+                  <Text className="text-gray-400 text-[13px] mt-1 leading-5">{gymDetails.branchLocation}</Text>
+                </View>
+              </View>
+
+              {/* Phone Info */}
+              {gymDetails.branchPhone && gymDetails.branchPhone !== 'Not Specified' && (
+                <View className="flex-row items-center pt-3 border-t border-zinc-800/40">
+                  <Ionicons name="call" size={16} color={GRAY || '#888'} className="mr-3" />
+                  <Text className="text-gray-300 text-[13px] ml-2 font-semibold">{gymDetails.branchPhone}</Text>
+                </View>
+              )}
+            </View>
+
+            {/* CONTACT & INTERACTION BUTTONS */}
+            <View className="flex-row gap-3 mb-8">
+              <TouchableOpacity
+                className="flex-1 flex-row items-center justify-center py-3.5 rounded-xl bg-zinc-900 border"
                 style={{ borderColor: borderBg }}
+                onPress={() => handleCall(gymDetails.branchPhone)}
+                disabled={!gymDetails.branchPhone || gymDetails.branchPhone === 'Not Specified'}
               >
-                <FontAwesome5
-                  name="medal"
-                  size={16}
-                  color={
-                    gymDetails.plan === 'VIP'
-                      ? '#EAB308' // Gold
-                      : gymDetails.plan === 'Premium'
-                        ? '#A855F7' // Purple
-                        : '#64748B' // Silver
-                  }
-                />
-              </View>
-            </View>
-          </View>
+                <Feather name="phone" size={16} color="#FFF" style={{ marginRight: 8 }} />
+                <Text className="text-white font-bold text-[14px]">Call Branch</Text>
+              </TouchableOpacity>
 
-          {/* BRANCH INFO CARD */}
-          <Text className="text-gray-400 font-extrabold uppercase tracking-widest text-[11px] mb-2 px-1">
-            Home Branch Details
-          </Text>
-          <View
-            className="p-5 rounded-xl border mb-6"
-            style={{ backgroundColor: cardBg, borderColor: borderBg }}
-          >
-            <View className="flex-row items-center mb-4">
-              <Ionicons name="location-sharp" size={20} color={themeAccent} className="mr-3" />
-              <View className="flex-1 ml-2">
-                <Text className="text-white text-[16px] font-extrabold">{gymDetails.branchName}</Text>
-                <Text className="text-gray-400 text-[13px] mt-1 leading-5">{gymDetails.branchLocation}</Text>
-              </View>
+              <TouchableOpacity
+                className="flex-1 flex-row items-center justify-center py-3.5 rounded-xl bg-zinc-900 border"
+                style={{ borderColor: borderBg }}
+                onPress={() => handleEmail(gymDetails.gymEmail)}
+                disabled={!gymDetails.gymEmail}
+              >
+                <Feather name="mail" size={16} color="#FFF" style={{ marginRight: 8 }} />
+                <Text className="text-white font-bold text-[14px]">Email Support</Text>
+              </TouchableOpacity>
             </View>
 
-            {/* Phone Info */}
-            {gymDetails.branchPhone && gymDetails.branchPhone !== 'Not Specified' && (
-              <View className="flex-row items-center pt-3 border-t border-zinc-800/40">
-                <Ionicons name="call" size={16} color={GRAY || '#888'} className="mr-3" />
-                <Text className="text-gray-300 text-[13px] ml-2 font-semibold">{gymDetails.branchPhone}</Text>
-              </View>
+            {/* BRANCHES LIST SECTION */}
+            <Text className="text-gray-400 font-extrabold uppercase tracking-widest text-[11px] mb-3 px-1">
+              Gym Branches
+            </Text>
+            {branches.length > 0 ? (
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-6">
+                {branches.map((b) => (
+                  <TouchableOpacity
+                    key={b._id}
+                    onPress={() => router.push(`/main/branch-details?branchId=${b._id}`)}
+                    className="mr-4 p-4 rounded-xl border"
+                    style={{ backgroundColor: cardBg, borderColor: borderBg, width: 220 }}
+                  >
+                    {b.image ? (
+                      <Image
+                        source={{ uri: b.image }}
+                        style={{ width: '100%', height: 100, borderRadius: 8, marginBottom: 10 }}
+                        resizeMode="cover"
+                      />
+                    ) : (
+                      <View className="bg-zinc-900 rounded-lg justify-center items-center mb-2" style={{ width: '100%', height: 100 }}>
+                        <Ionicons name="image-outline" size={24} color="#555" />
+                      </View>
+                    )}
+                    <Text className="text-white font-bold text-[14px] mb-1" numberOfLines={1}>
+                      {b.name}
+                    </Text>
+                    <View className="flex-row items-center">
+                      <Ionicons name="location-sharp" size={12} color={themeAccent} />
+                      <Text className="text-gray-400 text-[11px] ml-1 flex-1" numberOfLines={1}>
+                        {b.location}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            ) : (
+              <Text className="text-zinc-500 text-[12px] italic mb-6 px-1">No other branches registered.</Text>
             )}
-          </View>
 
-          {/* CONTACT & INTERACTION BUTTONS */}
-          <View className="flex-row gap-3 mb-8">
-            <TouchableOpacity
-              className="flex-1 flex-row items-center justify-center py-3.5 rounded-xl bg-zinc-900 border"
-              style={{ borderColor: borderBg }}
-              onPress={() => handleCall(gymDetails.branchPhone)}
-              disabled={!gymDetails.branchPhone || gymDetails.branchPhone === 'Not Specified'}
+            {/* SYNC INFORMATION FOOTNOTE */}
+            <View
+              className="p-4 rounded-xl border flex-row items-start mb-6"
+              style={{ backgroundColor: '#10B9810A', borderColor: '#10B98133' }}
             >
-              <Feather name="phone" size={16} color="#FFF" style={{ marginRight: 8 }} />
-              <Text className="text-white font-bold text-[14px]">Call Branch</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              className="flex-1 flex-row items-center justify-center py-3.5 rounded-xl bg-zinc-900 border"
-              style={{ borderColor: borderBg }}
-              onPress={() => handleEmail(gymDetails.gymEmail)}
-              disabled={!gymDetails.gymEmail}
-            >
-              <Feather name="mail" size={16} color="#FFF" style={{ marginRight: 8 }} />
-              <Text className="text-white font-bold text-[14px]">Email Support</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* SYNC INFORMATION FOOTNOTE */}
-          <View
-            className="p-4 rounded-xl border flex-row items-start mb-6"
-            style={{ backgroundColor: '#10B9810A', borderColor: '#10B98133' }}
-          >
-            <Ionicons name="checkmark-circle" size={20} color="#10B981" />
-            <View className="flex-1 ml-3">
-              <Text className="text-white text-[13px] font-bold">Training Database Synchronized</Text>
-              <Text className="text-gray-400 text-[12px] mt-1 leading-5">
-                Your workout plans and meal log entries are successfully sharing with your gym trainers. They can monitor your progress in real-time.
-              </Text>
+              <Ionicons name="checkmark-circle" size={20} color="#10B981" />
+              <View className="flex-1 ml-3">
+                <Text className="text-white text-[13px] font-bold">Training Database Synchronized</Text>
+                <Text className="text-gray-400 text-[12px] mt-1 leading-5">
+                  Your workout plans and meal log entries are successfully sharing with your gym trainers. They can monitor your progress in real-time.
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
       ) : (
         /* ================= UNENROLLED VIEW ================= */
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
@@ -281,6 +349,12 @@ const GymDetails = () => {
                     <Text className="text-white text-[22px] font-extrabold mb-1">
                       {gymDetails.gymName}
                     </Text>
+                    <View className="flex-row items-center mt-1">
+                      <Ionicons name="people" size={14} color={themeAccent} />
+                      <Text className="text-gray-400 text-[12px] font-semibold ml-1">
+                        {gymDetails.memberCount || 0} active members
+                      </Text>
+                    </View>
                   </View>
                 </View>
 
@@ -300,145 +374,185 @@ const GymDetails = () => {
                   </View>
                 )}
 
-              {gymDetails.gymEmail ? (
-                <View className="flex-row items-center">
-                  <Ionicons name="mail" size={16} color={GRAY} className="mr-2" style={{ marginRight: 8 }} />
-                  <Text className="text-gray-300 text-[13px]">{gymDetails.gymEmail}</Text>
+                {gymDetails.gymEmail ? (
+                  <View className="flex-row items-center">
+                    <Ionicons name="mail" size={16} color={GRAY} className="mr-2" style={{ marginRight: 8 }} />
+                    <Text className="text-gray-300 text-[13px]">{gymDetails.gymEmail}</Text>
+                  </View>
+                ) : null}
+
+                {/* CONTACT BUTTONS FOR SELECTED BRANCH */}
+                <View className="flex-row gap-3 mt-5">
+                  <TouchableOpacity
+                    className="flex-1 flex-row items-center justify-center py-2.5 rounded-xl bg-zinc-900 border"
+                    style={{ borderColor: borderBg }}
+                    onPress={() => handleCall(gymDetails.branchPhone)}
+                    disabled={!gymDetails.branchPhone || gymDetails.branchPhone === 'Not Specified'}
+                  >
+                    <Feather name="phone" size={14} color="#FFF" style={{ marginRight: 6 }} />
+                    <Text className="text-white font-bold text-[12px]">Call</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    className="flex-1 flex-row items-center justify-center py-2.5 rounded-xl bg-zinc-900 border"
+                    style={{ borderColor: borderBg }}
+                    onPress={() => handleEmail(gymDetails.gymEmail)}
+                    disabled={!gymDetails.gymEmail}
+                  >
+                    <Feather name="mail" size={14} color="#FFF" style={{ marginRight: 6 }} />
+                    <Text className="text-white font-bold text-[12px]">Email</Text>
+                  </TouchableOpacity>
                 </View>
-              ) : null}
-
-              {/* CONTACT BUTTONS FOR SELECTED BRANCH */}
-              <View className="flex-row gap-3 mt-5">
-                <TouchableOpacity
-                  className="flex-1 flex-row items-center justify-center py-2.5 rounded-xl bg-zinc-900 border"
-                  style={{ borderColor: borderBg }}
-                  onPress={() => handleCall(gymDetails.branchPhone)}
-                  disabled={!gymDetails.branchPhone || gymDetails.branchPhone === 'Not Specified'}
-                >
-                  <Feather name="phone" size={14} color="#FFF" style={{ marginRight: 6 }} />
-                  <Text className="text-white font-bold text-[12px]">Call</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  className="flex-1 flex-row items-center justify-center py-2.5 rounded-xl bg-zinc-900 border"
-                  style={{ borderColor: borderBg }}
-                  onPress={() => handleEmail(gymDetails.gymEmail)}
-                  disabled={!gymDetails.gymEmail}
-                >
-                  <Feather name="mail" size={14} color="#FFF" style={{ marginRight: 6 }} />
-                  <Text className="text-white font-bold text-[12px]">Email</Text>
-                </TouchableOpacity>
               </View>
-            </View>
-          )}
+            )}
 
-          {/* WELCOME GRAPHIC PANEL */}
-          <View
-            className="p-6 rounded-2xl border mb-6"
-            style={{ backgroundColor: cardBg, borderColor: borderBg }}
-          >
-            <View className="flex-row items-center gap-4 mb-4">
-              <View className="w-12 h-12 rounded-xl bg-zinc-900 border items-center justify-center" style={{ borderColor: borderBg }}>
-                <FontAwesome5 name="store" size={20} color={themeAccent} />
-              </View>
-              <View className="flex-1">
-                <Text className="text-white text-[20px] font-black">Join a Partner Gym</Text>
-                <Text className="text-gray-400 text-[13px] mt-0.5">Take your training to the next level</Text>
-              </View>
-            </View>
-
-            <Text className="text-gray-300 text-[13px] leading-5 mt-2">
-              Sync your mobile app with one of our certified partner gyms. By joining, your physical stats, workout completions, and dietary routines will sync directly with your gym trainer console.
+            {/* BRANCHES LIST SECTION */}
+            <Text className="text-gray-400 font-extrabold uppercase tracking-widest text-[11px] mb-3 px-1">
+              Gym Branches
             </Text>
-          </View>
+            {branches.length > 0 ? (
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-6">
+                {branches.map((b) => (
+                  <TouchableOpacity
+                    key={b._id}
+                    onPress={() => router.push(`/main/branch-details?branchId=${b._id}`)}
+                    className="mr-4 p-4 rounded-xl border"
+                    style={{ backgroundColor: cardBg, borderColor: borderBg, width: 220 }}
+                  >
+                    {b.image ? (
+                      <Image
+                        source={{ uri: b.image }}
+                        style={{ width: '100%', height: 100, borderRadius: 8, marginBottom: 10 }}
+                        resizeMode="cover"
+                      />
+                    ) : (
+                      <View className="bg-zinc-900 rounded-lg justify-center items-center mb-2" style={{ width: '100%', height: 100 }}>
+                        <Ionicons name="image-outline" size={24} color="#555" />
+                      </View>
+                    )}
+                    <Text className="text-white font-bold text-[14px] mb-1" numberOfLines={1}>
+                      {b.name}
+                    </Text>
+                    <View className="flex-row items-center">
+                      <Ionicons name="location-sharp" size={12} color={themeAccent} />
+                      <Text className="text-gray-400 text-[11px] ml-1 flex-1" numberOfLines={1}>
+                        {b.location}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            ) : (
+              <Text className="text-zinc-500 text-[12px] italic mb-6 px-1">No other branches registered.</Text>
+            )}
 
-          {/* BENEFIT ITEMS LIST */}
-          <Text className="text-gray-400 font-extrabold uppercase tracking-widest text-[11px] mb-3 px-1">
-            Membership Benefits
-          </Text>
-
-          <View className="gap-3 mb-6">
-            <View className="flex-row items-start p-4 rounded-xl bg-zinc-950 border" style={{ borderColor: borderBg }}>
-              <Ionicons name="pulse" size={20} color={themeAccent} className="mr-3" />
-              <View className="flex-1 ml-2">
-                <Text className="text-white font-bold text-[14px]">Real-Time Progress Sharing</Text>
-                <Text className="text-gray-400 text-[12px] mt-1 leading-5">Trainers can inspect your workout streaks and log metrics directly to adjust your schedule.</Text>
-              </View>
-            </View>
-
-            <View className="flex-row items-start p-4 rounded-xl bg-zinc-950 border" style={{ borderColor: borderBg }}>
-              <Ionicons name="shield-checkmark" size={20} color={themeAccent} className="mr-3" />
-              <View className="flex-1 ml-2">
-                <Text className="text-white font-bold text-[14px]">Access Specialized Equipment</Text>
-                <Text className="text-gray-400 text-[12px] mt-1 leading-5">Unlock equipment tutorials and log metrics optimized for your gym's specific catalog.</Text>
-              </View>
-            </View>
-
-            <View className="flex-row items-start p-4 rounded-xl bg-zinc-950 border" style={{ borderColor: borderBg }}>
-              <Ionicons name="sparkles" size={20} color={themeAccent} className="mr-3" />
-              <View className="flex-1 ml-2">
-                <Text className="text-white font-bold text-[14px]">Premium Tier Assignments</Text>
-                <Text className="text-gray-400 text-[12px] mt-1 leading-5">Get assigned to custom Basic, Premium, or VIP tiers with associated perks.</Text>
-              </View>
-            </View>
-          </View>
-
-          {/* HOW TO JOIN STEP BY STEP */}
-          <Text className="text-gray-400 font-extrabold uppercase tracking-widest text-[11px] mb-3 px-1">
-            Enrollment Steps
-          </Text>
-
-          <View
-            className="p-5 rounded-xl border mb-8"
-            style={{ backgroundColor: cardBg, borderColor: borderBg }}
-          >
-            {/* Step 1 */}
-            <View className="flex-row items-start mb-5">
-              <View className="w-6 h-6 rounded-full bg-zinc-900 border items-center justify-center mr-3 mt-0.5" style={{ borderColor: borderBg }}>
-                <Text className="text-white text-[11px] font-bold">1</Text>
-              </View>
-              <View className="flex-1 ml-1">
-                <Text className="text-white font-bold text-[13px]">Visit a Fitzone Gym</Text>
-                <Text className="text-gray-400 text-[12px] mt-0.5 leading-5">Drop by any of our certified local gym facilities or branches.</Text>
-              </View>
-            </View>
-
-            {/* Step 2 */}
-            <View className="flex-row items-start mb-5">
-              <View className="w-6 h-6 rounded-full bg-zinc-900 border items-center justify-center mr-3 mt-0.5" style={{ borderColor: borderBg }}>
-                <Text className="text-white text-[11px] font-bold">2</Text>
-              </View>
-              <View className="flex-1 ml-1">
-                <Text className="text-white font-bold text-[13px]">Provide Your Account Email</Text>
-                <Text className="text-gray-400 text-[12px] mt-0.5 leading-5">Share your registered Fitzone login email with the gym owner.</Text>
-              </View>
-            </View>
-
-            {/* Step 3 */}
-            <View className="flex-row items-start">
-              <View className="w-6 h-6 rounded-full bg-zinc-900 border items-center justify-center mr-3 mt-0.5" style={{ borderColor: borderBg }}>
-                <Text className="text-white text-[11px] font-bold">3</Text>
-              </View>
-              <View className="flex-1 ml-1">
-                <Text className="text-white font-bold text-[13px]">Instantly Connect</Text>
-                <Text className="text-gray-400 text-[12px] mt-0.5 leading-5">Once added by the manager, this console will automatically update with your credentials.</Text>
-              </View>
-            </View>
-
-            {/* REGISTERED EMAIL CALLOUT */}
+            {/* WELCOME GRAPHIC PANEL */}
             <View
-              className="mt-6 p-4 rounded-lg flex-row items-center border bg-zinc-950"
-              style={{ borderColor: borderBg }}
+              className="p-6 rounded-2xl border mb-6"
+              style={{ backgroundColor: cardBg, borderColor: borderBg }}
             >
-              <Feather name="info" size={16} color={themeAccent} className="mr-3" />
-              <View className="flex-1 ml-2">
-                <Text className="text-gray-400 text-[11px] uppercase tracking-wider">Your Registered Email</Text>
-                <Text className="text-white text-[14px] font-black mt-0.5">{auth.email || "not-found"}</Text>
+              <View className="flex-row items-center gap-4 mb-4">
+                <View className="w-12 h-12 rounded-xl bg-zinc-900 border items-center justify-center" style={{ borderColor: borderBg }}>
+                  <FontAwesome5 name="store" size={20} color={themeAccent} />
+                </View>
+                <View className="flex-1">
+                  <Text className="text-white text-[20px] font-black">Join a Partner Gym</Text>
+                  <Text className="text-gray-400 text-[13px] mt-0.5">Take your training to the next level</Text>
+                </View>
+              </View>
+
+              <Text className="text-gray-300 text-[13px] leading-5 mt-2">
+                Sync your mobile app with one of our certified partner gyms. By joining, your physical stats, workout completions, and dietary routines will sync directly with your gym trainer console.
+              </Text>
+            </View>
+
+            {/* BENEFIT ITEMS LIST */}
+            <Text className="text-gray-400 font-extrabold uppercase tracking-widest text-[11px] mb-3 px-1">
+              Membership Benefits
+            </Text>
+
+            <View className="gap-3 mb-6">
+              <View className="flex-row items-start p-4 rounded-xl bg-zinc-950 border" style={{ borderColor: borderBg }}>
+                <Ionicons name="pulse" size={20} color={themeAccent} className="mr-3" />
+                <View className="flex-1 ml-2">
+                  <Text className="text-white font-bold text-[14px]">Real-Time Progress Sharing</Text>
+                  <Text className="text-gray-400 text-[12px] mt-1 leading-5">Trainers can inspect your workout streaks and log metrics directly to adjust your schedule.</Text>
+                </View>
+              </View>
+
+              <View className="flex-row items-start p-4 rounded-xl bg-zinc-950 border" style={{ borderColor: borderBg }}>
+                <Ionicons name="shield-checkmark" size={20} color={themeAccent} className="mr-3" />
+                <View className="flex-1 ml-2">
+                  <Text className="text-white font-bold text-[14px]">Access Specialized Equipment</Text>
+                  <Text className="text-gray-400 text-[12px] mt-1 leading-5">Unlock equipment tutorials and log metrics optimized for your gym's specific catalog.</Text>
+                </View>
+              </View>
+
+              <View className="flex-row items-start p-4 rounded-xl bg-zinc-950 border" style={{ borderColor: borderBg }}>
+                <Ionicons name="sparkles" size={20} color={themeAccent} className="mr-3" />
+                <View className="flex-1 ml-2">
+                  <Text className="text-white font-bold text-[14px]">Premium Tier Assignments</Text>
+                  <Text className="text-gray-400 text-[12px] mt-1 leading-5">Get assigned to custom Basic, Premium, or VIP tiers with associated perks.</Text>
+                </View>
+              </View>
+            </View>
+
+            {/* HOW TO JOIN STEP BY STEP */}
+            <Text className="text-gray-400 font-extrabold uppercase tracking-widest text-[11px] mb-3 px-1">
+              Enrollment Steps
+            </Text>
+
+            <View
+              className="p-5 rounded-xl border mb-8"
+              style={{ backgroundColor: cardBg, borderColor: borderBg }}
+            >
+              {/* Step 1 */}
+              <View className="flex-row items-start mb-5">
+                <View className="w-6 h-6 rounded-full bg-zinc-900 border items-center justify-center mr-3 mt-0.5" style={{ borderColor: borderBg }}>
+                  <Text className="text-white text-[11px] font-bold">1</Text>
+                </View>
+                <View className="flex-1 ml-1">
+                  <Text className="text-white font-bold text-[13px]">Visit a Fitzone Gym</Text>
+                  <Text className="text-gray-400 text-[12px] mt-0.5 leading-5">Drop by any of our certified local gym facilities or branches.</Text>
+                </View>
+              </View>
+
+              {/* Step 2 */}
+              <View className="flex-row items-start mb-5">
+                <View className="w-6 h-6 rounded-full bg-zinc-900 border items-center justify-center mr-3 mt-0.5" style={{ borderColor: borderBg }}>
+                  <Text className="text-white text-[11px] font-bold">2</Text>
+                </View>
+                <View className="flex-1 ml-1">
+                  <Text className="text-white font-bold text-[13px]">Provide Your Account Email</Text>
+                  <Text className="text-gray-400 text-[12px] mt-0.5 leading-5">Share your registered Fitzone login email with the gym owner.</Text>
+                </View>
+              </View>
+
+              {/* Step 3 */}
+              <View className="flex-row items-start">
+                <View className="w-6 h-6 rounded-full bg-zinc-900 border items-center justify-center mr-3 mt-0.5" style={{ borderColor: borderBg }}>
+                  <Text className="text-white text-[11px] font-bold">3</Text>
+                </View>
+                <View className="flex-1 ml-1">
+                  <Text className="text-white font-bold text-[13px]">Instantly Connect</Text>
+                  <Text className="text-gray-400 text-[12px] mt-0.5 leading-5">Once added by the manager, this console will automatically update with your credentials.</Text>
+                </View>
+              </View>
+
+              {/* REGISTERED EMAIL CALLOUT */}
+              <View
+                className="mt-6 p-4 rounded-lg flex-row items-center border bg-zinc-950"
+                style={{ borderColor: borderBg }}
+              >
+                <Feather name="info" size={16} color={themeAccent} className="mr-3" />
+                <View className="flex-1 ml-2">
+                  <Text className="text-gray-400 text-[11px] uppercase tracking-wider">Your Registered Email</Text>
+                  <Text className="text-white text-[14px] font-black mt-0.5">{auth.email || "not-found"}</Text>
+                </View>
               </View>
             </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
       )}
     </SafeAreaView>
   )
