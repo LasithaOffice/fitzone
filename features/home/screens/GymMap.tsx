@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, ActivityIndicator, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, ActivityIndicator, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import MapView, { Marker, Callout } from 'react-native-maps';
@@ -14,6 +14,7 @@ interface BranchInfo {
   phone?: string;
   latitude?: number;
   longitude?: number;
+  image?: string;
   gymId?: {
     _id: string;
     gymName: string;
@@ -61,6 +62,7 @@ const GymMap = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [branches, setBranches] = useState<BranchInfo[]>([]);
+  const [selectedBranch, setSelectedBranch] = useState<BranchInfo | null>(null);
   const mapRef = useRef<MapView | null>(null);
 
   const fetchBranches = async () => {
@@ -177,35 +179,76 @@ const GymMap = () => {
                     longitude: branch.longitude!,
                   }}
                   pinColor={PRIMARY}
-                >
-                  <Callout
-                    tooltip
-                    onPress={() =>
-                      router.push({
-                        pathname: '/main/gym-details',
-                        params: { branchId: branch._id },
-                      })
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    setSelectedBranch(branch);
+                    if (mapRef.current) {
+                      mapRef.current.animateToRegion({
+                        latitude: branch.latitude!,
+                        longitude: branch.longitude!,
+                        latitudeDelta: 0.015,
+                        longitudeDelta: 0.015,
+                      }, 500);
                     }
-                  >
-                    <View style={styles.calloutContainer}>
-                      <Text style={styles.gymName}>
-                        {branch.gymId?.gymName || 'Fitzone Partner'}
-                      </Text>
-                      <Text style={styles.branchName}>{branch.name}</Text>
-                      <Text style={styles.branchAddress} numberOfLines={2}>
-                        {branch.location}
-                      </Text>
-                      {branch.phone ? (
-                        <Text style={styles.branchPhone}>{branch.phone}</Text>
-                      ) : null}
-                      <View style={styles.detailsButton}>
-                        <Text style={styles.detailsButtonText}>Details</Text>
-                      </View>
-                    </View>
-                  </Callout>
-                </Marker>
+                  }}
+                />
               ))}
           </MapView>
+
+          {selectedBranch && (
+            <View style={styles.popupContainer}>
+              <View style={styles.popupCard}>
+                {/* Branch cover image */}
+                <Image
+                  source={{ uri: selectedBranch.image || 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=600&auto=format&fit=crop' }}
+                  style={styles.popupImage}
+                  resizeMode="cover"
+                />
+
+                <View style={styles.popupInfo}>
+                  <View style={styles.popupHeader}>
+                    <Text style={styles.popupGymName} numberOfLines={1}>
+                      {selectedBranch.gymId?.gymName || 'Fitzone Partner'}
+                    </Text>
+                    <TouchableOpacity 
+                      style={styles.closeButton} 
+                      onPress={() => setSelectedBranch(null)}
+                    >
+                      <Feather name="x" size={16} color="#FFF" />
+                    </TouchableOpacity>
+                  </View>
+
+                  <Text style={styles.popupBranchName} numberOfLines={1}>
+                    {selectedBranch.name}
+                  </Text>
+                  
+                  <Text style={styles.popupAddress} numberOfLines={2}>
+                    {selectedBranch.location}
+                  </Text>
+
+                  {selectedBranch.phone ? (
+                    <Text style={styles.popupPhone} numberOfLines={1}>
+                      {selectedBranch.phone}
+                    </Text>
+                  ) : null}
+
+                  <TouchableOpacity
+                    style={styles.popupDetailsButton}
+                    onPress={() => {
+                      const bId = selectedBranch._id;
+                      setSelectedBranch(null);
+                      router.push({
+                        pathname: '/main/gym-details',
+                        params: { branchId: bId },
+                      });
+                    }}
+                  >
+                    <Text style={styles.popupDetailsButtonText}>View Details</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          )}
         </View>
       )}
     </SafeAreaView>
@@ -324,6 +367,88 @@ const styles = StyleSheet.create({
     fontSize: 11,
     textTransform: 'uppercase',
     letterSpacing: 1,
+  },
+  popupContainer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 16,
+    right: 16,
+    zIndex: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  popupCard: {
+    backgroundColor: '#0d0d0f',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#232325',
+    overflow: 'hidden',
+    flexDirection: 'row',
+    height: 155,
+  },
+  popupImage: {
+    width: 120,
+    height: '100%',
+  },
+  popupInfo: {
+    flex: 1,
+    padding: 12,
+    justifyContent: 'space-between',
+  },
+  popupHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  popupGymName: {
+    color: '#9fd101',
+    fontWeight: '800',
+    fontSize: 14,
+    flex: 1,
+    marginRight: 8,
+  },
+  closeButton: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  popupBranchName: {
+    color: '#FFF',
+    fontWeight: 'bold',
+    fontSize: 13,
+    marginTop: 2,
+  },
+  popupAddress: {
+    color: '#9d9d9f',
+    fontSize: 11,
+    lineHeight: 14,
+    marginTop: 2,
+  },
+  popupPhone: {
+    color: '#9d9d9f',
+    fontSize: 10,
+    fontStyle: 'italic',
+    marginTop: 2,
+  },
+  popupDetailsButton: {
+    backgroundColor: '#9fd101',
+    paddingVertical: 6,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 6,
+  },
+  popupDetailsButtonText: {
+    color: '#000',
+    fontWeight: '800',
+    fontSize: 11,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
 });
 

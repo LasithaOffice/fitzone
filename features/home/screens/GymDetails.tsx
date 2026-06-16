@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Linking } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Linking, Image } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, useLocalSearchParams } from 'expo-router'
 import { Ionicons, Feather, FontAwesome5 } from '@expo/vector-icons'
+import GymImageCarousel from '../components/GymImageCarousel'
 import { COMP_BACKGROUND_COLOR, COMP_BORDER_COLOR, GRAY, PRIMARY } from '@/constants/colors'
 import { useAppSelector } from '@/store'
 import apiClient from '@/lib/apiClient'
@@ -11,6 +12,8 @@ interface GymInfo {
   enrolled: boolean;
   gymName?: string;
   gymEmail?: string;
+  logoUrl?: string;
+  images?: string[];
   branchName?: string;
   branchLocation?: string;
   branchPhone?: string;
@@ -37,6 +40,8 @@ const GymDetails = () => {
           enrolled: false,
           gymName: data.gymId?.gymName || 'Fitzone Partner',
           gymEmail: data.gymId?.email || '',
+          logoUrl: data.gymId?.logoUrl || '',
+          images: data.gymId?.images || [],
           branchName: data.name,
           branchLocation: data.location,
           branchPhone: data.phone || 'Not Specified',
@@ -118,24 +123,36 @@ const GymDetails = () => {
         </View>
       ) : gymDetails && gymDetails.enrolled ? (
         /* ================= ENROLLED VIEW ================= */
-        <ScrollView className="flex-1 px-4 mt-4" showsVerticalScrollIndicator={false}>
-          {/* GYM MAIN PROFILE BRAND */}
-          <View
-            className="p-6 rounded-2xl border mb-6 relative overflow-hidden"
-            style={{ backgroundColor: cardBg, borderColor: borderBg }}
-          >
-            <View className="flex-row justify-between items-start">
-              <View className="flex-1 mr-3">
-                <Text className="text-[12px] font-extrabold uppercase tracking-widest text-primary mb-1">
-                  Active Membership
-                </Text>
-                <Text className="text-white text-[24px] font-extrabold mb-1">
-                  {gymDetails.gymName}
-                </Text>
-                <Text className="text-gray-400 text-[14px] font-medium">
-                  Joined: {formatDate(gymDetails.joinedDate)}
-                </Text>
+        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+          <GymImageCarousel images={gymDetails.images} />
+
+          <View className="px-4 mt-4">
+            {/* GYM MAIN PROFILE BRAND */}
+            <View
+              className="p-6 rounded-2xl border mb-6 relative overflow-hidden"
+              style={{ backgroundColor: cardBg, borderColor: borderBg }}
+            >
+              <View className="flex-row items-center mb-4">
+                {gymDetails.logoUrl ? (
+                  <Image
+                    source={{ uri: gymDetails.logoUrl }}
+                    style={{ width: 50, height: 50, borderRadius: 10, marginRight: 12 }}
+                    resizeMode="cover"
+                  />
+                ) : null}
+                <View className="flex-1">
+                  <Text className="text-[12px] font-extrabold uppercase tracking-widest text-primary mb-1">
+                    Active Membership
+                  </Text>
+                  <Text className="text-white text-[22px] font-extrabold mb-1">
+                    {gymDetails.gymName}
+                  </Text>
+                </View>
               </View>
+
+              <Text className="text-gray-400 text-[14px] font-medium">
+                Joined: {formatDate(gymDetails.joinedDate)}
+              </Text>
 
               {/* Status Indicator */}
               <View
@@ -149,7 +166,6 @@ const GymDetails = () => {
                   {gymDetails.status || 'active'}
                 </Text>
               </View>
-            </View>
 
             {/* Plan Tier Banner */}
             <View className="mt-6 pt-5 border-t border-zinc-800/60 flex-row items-center justify-between">
@@ -237,36 +253,52 @@ const GymDetails = () => {
               </Text>
             </View>
           </View>
-        </ScrollView>
+        </View>
+      </ScrollView>
       ) : (
         /* ================= UNENROLLED VIEW ================= */
-        <ScrollView className="flex-1 px-4 mt-4" showsVerticalScrollIndicator={false}>
-          {gymDetails && gymDetails.branchName && (
-            <View
-              className="p-5 rounded-2xl border mb-6"
-              style={{ backgroundColor: cardBg, borderColor: borderBg }}
-            >
-              <Text className="text-[12px] font-extrabold uppercase tracking-widest text-primary mb-2">
-                Selected Partner Branch
-              </Text>
-              <Text className="text-white text-[22px] font-extrabold mb-1">
-                {gymDetails.gymName}
-              </Text>
-              <Text style={{ color: themeAccent }} className="text-[14px] font-bold mb-4">
-                {gymDetails.branchName}
-              </Text>
-              
-              <View className="flex-row items-center mb-3">
-                <Ionicons name="location-sharp" size={18} color={themeAccent} className="mr-2" style={{ marginRight: 8 }} />
-                <Text className="text-gray-300 text-[13px] flex-1 leading-5">{gymDetails.branchLocation}</Text>
-              </View>
+        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+          <GymImageCarousel images={gymDetails?.images} />
 
-              {gymDetails.branchPhone && gymDetails.branchPhone !== 'Not Specified' && (
-                <View className="flex-row items-center mb-3">
-                  <Ionicons name="call" size={16} color={GRAY} className="mr-2" style={{ marginRight: 8 }} />
-                  <Text className="text-gray-300 text-[13px]">{gymDetails.branchPhone}</Text>
+          <View className="px-4 mt-4">
+            {gymDetails && gymDetails.branchName && (
+              <View
+                className="p-5 rounded-2xl border mb-6"
+                style={{ backgroundColor: cardBg, borderColor: borderBg }}
+              >
+                <View className="flex-row items-center mb-4">
+                  {gymDetails.logoUrl ? (
+                    <Image
+                      source={{ uri: gymDetails.logoUrl }}
+                      style={{ width: 50, height: 50, borderRadius: 10, marginRight: 12 }}
+                      resizeMode="cover"
+                    />
+                  ) : null}
+                  <View className="flex-1">
+                    <Text className="text-[12px] font-extrabold uppercase tracking-widest text-primary mb-1">
+                      Selected Partner Branch
+                    </Text>
+                    <Text className="text-white text-[22px] font-extrabold mb-1">
+                      {gymDetails.gymName}
+                    </Text>
+                  </View>
                 </View>
-              )}
+
+                <Text style={{ color: themeAccent }} className="text-[14px] font-bold mb-4">
+                  {gymDetails.branchName}
+                </Text>
+
+                <View className="flex-row items-center mb-3">
+                  <Ionicons name="location-sharp" size={18} color={themeAccent} style={{ marginRight: 8 }} />
+                  <Text className="text-gray-300 text-[13px] flex-1 leading-5">{gymDetails.branchLocation}</Text>
+                </View>
+
+                {gymDetails.branchPhone && gymDetails.branchPhone !== 'Not Specified' && (
+                  <View className="flex-row items-center mb-3">
+                    <Ionicons name="call" size={16} color={GRAY} style={{ marginRight: 8 }} />
+                    <Text className="text-gray-300 text-[13px]">{gymDetails.branchPhone}</Text>
+                  </View>
+                )}
 
               {gymDetails.gymEmail ? (
                 <View className="flex-row items-center">
@@ -405,7 +437,8 @@ const GymDetails = () => {
               </View>
             </View>
           </View>
-        </ScrollView>
+        </View>
+      </ScrollView>
       )}
     </SafeAreaView>
   )
