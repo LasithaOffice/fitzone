@@ -9,7 +9,7 @@ import { router } from 'expo-router';
 
 const GymNetwork = () => {
 
-  const [gymEnrollment, setGymEnrollment] = useState<{ enrolled: boolean; gymName?: string } | null>(null)
+  const [gymEnrollment, setGymEnrollment] = useState<{ enrolled: boolean; gymName?: string; logoUrl?: string; branchName?: string } | null>(null)
   const [gymLoading, setGymLoading] = useState(false)
 
   useEffect(() => {
@@ -71,24 +71,32 @@ const GymNetwork = () => {
             </TouchableOpacity>
           </View>
           :
-          <View className='p-2 m-4 rounded-lg flex-row' style={{ backgroundColor: COMP_BACKGROUND_COLOR, borderColor: COMP_BORDER_COLOR, borderWidth: 1 }}>
-            <View className='flex-row gap-3 w-full'>
-              <Image source={require('@/assets/images/gym1.jpg')} className='w-[60px] h-[40px]' />
+          <View className='p-2.5 m-4 rounded-xl flex-row items-center' style={{ backgroundColor: COMP_BACKGROUND_COLOR, borderColor: COMP_BORDER_COLOR, borderWidth: 1 }}>
+            <View className='flex-row gap-3 w-full items-center'>
+              <Image
+                source={gymEnrollment.logoUrl ? { uri: gymEnrollment.logoUrl } : require('@/assets/images/gym1.jpg')}
+                className='w-[50px] h-[50px] rounded-lg'
+                resizeMode="cover"
+              />
               <View className='flex-1'>
-                <Text className='text-[12px]'>Gym Golden</Text>
-                <View className='flex-row gap-1'>
+                <Text className='text-white font-extrabold text-[14px]'>{gymEnrollment.gymName}</Text>
+                <View className='flex-row gap-1 mt-1'>
                   <View className='flex-row items-center gap-1'>
-                    <Text className='text-gray-400 text-[11px]'>12 km away</Text>
+                    <Text className='text-gray-400 text-[11px]'>{gymEnrollment.branchName || 'Main Branch'}</Text>
                   </View>
                   <View className='flex-row items-center'>
-                    <Octicons name="dot-fill" size={20} color={PRIMARY} />
-                    <Text className={`text-[11px] text-primary`}>Open now</Text>
+                    <Octicons name="dot-fill" size={14} color={PRIMARY} style={{ marginLeft: 6, marginRight: 2 }} />
+                    <Text className={`text-[11px] text-primary font-bold`}>Enrolled</Text>
                   </View>
                 </View>
               </View>
-              <Button variant={'outline'} className='w-36 h-10 px-5'>
-                <Octicons name='location' size={20} color={'white'} />
-                <Text className='text-[14px]'>Switch Branch</Text>
+              <Button
+                variant={'outline'}
+                className='h-9 px-4 rounded-lg bg-primary border-0'
+                onPress={() => router.push('/main/gym-details')}
+                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}
+              >
+                <Text className='text-[13px] text-white font-black uppercase tracking-wider'>Visit</Text>
               </Button>
             </View>
           </View>

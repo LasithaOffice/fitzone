@@ -19,6 +19,7 @@ interface BranchInfo {
     _id: string;
     gymName: string;
     email: string;
+    logoUrl?: string;
   };
 }
 
@@ -63,6 +64,7 @@ const GymMap = () => {
   const [error, setError] = useState<string | null>(null);
   const [branches, setBranches] = useState<BranchInfo[]>([]);
   const [selectedBranch, setSelectedBranch] = useState<BranchInfo | null>(null);
+  const [enrolledGym, setEnrolledGym] = useState<{ enrolled: boolean; gymName?: string; gymEmail?: string } | null>(null);
   const mapRef = useRef<MapView | null>(null);
 
   const fetchBranches = async () => {
@@ -81,6 +83,16 @@ const GymMap = () => {
 
   useEffect(() => {
     fetchBranches();
+
+    const fetchEnrolledGym = async () => {
+      try {
+        const res = await apiClient.get('/gym/my-gym');
+        setEnrolledGym(res.data);
+      } catch (err) {
+        console.warn('Failed to fetch enrolled gym details:', err);
+      }
+    };
+    fetchEnrolledGym();
   }, []);
 
   // Fit all markers on the map
@@ -171,28 +183,48 @@ const GymMap = () => {
           >
             {branches
               .filter((b) => b.latitude != null && b.longitude != null)
-              .map((branch) => (
-                <Marker
-                  key={branch._id}
-                  coordinate={{
-                    latitude: branch.latitude!,
-                    longitude: branch.longitude!,
-                  }}
-                  pinColor={PRIMARY}
-                  onPress={(e) => {
-                    e.stopPropagation();
-                    setSelectedBranch(branch);
-                    if (mapRef.current) {
-                      mapRef.current.animateToRegion({
-                        latitude: branch.latitude!,
-                        longitude: branch.longitude!,
-                        latitudeDelta: 0.015,
-                        longitudeDelta: 0.015,
-                      }, 500);
-                    }
-                  }}
-                />
-              ))}
+              .map((branch) => {
+                const isEnrolled = enrolledGym?.enrolled && enrolledGym?.gymEmail?.toLowerCase() === branch.gymId?.email?.toLowerCase();
+                
+                // Construct the marker image source
+                const imageSource = branch.gymId?.logoUrl 
+                  ? { uri: branch.gymId.logoUrl } 
+                  : { uri: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=200&auto=format&fit=crop' };
+
+                return (
+                  <Marker
+                    key={branch._id}
+                    coordinate={{
+                      latitude: branch.latitude!,
+                      longitude: branch.longitude!,
+                    }}
+                    tracksViewChanges={true} // Keep tracking active on Android to ensure remote image renders when loaded
+                    onPress={(e) => {
+                      e.stopPropagation();
+                      setSelectedBranch(branch);
+                      if (mapRef.current) {
+                        mapRef.current.animateToRegion({
+                          latitude: branch.latitude!,
+                          longitude: branch.longitude!,
+                          latitudeDelta: 0.015,
+                          longitudeDelta: 0.015,
+                        }, 500);
+                      }
+                    }}
+                  >
+                    <View style={[
+                      styles.markerOuter,
+                      isEnrolled ? styles.markerEnrolled : styles.markerRegular
+                    ]}>
+                      <Image
+                        source={imageSource}
+                        style={isEnrolled ? styles.markerLogoEnrolled : styles.markerLogoRegular}
+                        resizeMode="cover"
+                      />
+                    </View>
+                  </Marker>
+                );
+              })}
           </MapView>
 
           {selectedBranch && (
@@ -210,8 +242,8 @@ const GymMap = () => {
                     <Text style={styles.popupGymName} numberOfLines={1}>
                       {selectedBranch.gymId?.gymName || 'Fitzone Partner'}
                     </Text>
-                    <TouchableOpacity 
-                      style={styles.closeButton} 
+                    <TouchableOpacity
+                      style={styles.closeButton}
                       onPress={() => setSelectedBranch(null)}
                     >
                       <Feather name="x" size={16} color="#FFF" />
@@ -221,7 +253,7 @@ const GymMap = () => {
                   <Text style={styles.popupBranchName} numberOfLines={1}>
                     {selectedBranch.name}
                   </Text>
-                  
+
                   <Text style={styles.popupAddress} numberOfLines={2}>
                     {selectedBranch.location}
                   </Text>
@@ -449,6 +481,36 @@ const styles = StyleSheet.create({
     fontSize: 11,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
+  },
+  markerOuter: {
+    backgroundColor: '#000',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+  },
+  markerRegular: {
+    borderColor: '#FFF',
+    width: 46,
+    height: 46,
+    borderRadius: 23,
+  },
+  markerEnrolled: {
+    borderColor: '#9fd101',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+  },
+  markerLogoRegular: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    overflow: 'hidden',   // required on Android
+  },
+  markerLogoEnrolled: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    overflow: 'hidden',
   },
 });
 
