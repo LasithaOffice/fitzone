@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Linking, Image } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Linking, Image, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { router, useLocalSearchParams } from 'expo-router'
 import { Ionicons, Feather, FontAwesome5 } from '@expo/vector-icons'
@@ -70,9 +70,7 @@ const GymDetails = () => {
       if (!gymDetails?.gymId) return
       try {
         const response = await apiClient.get(`/gym/public-branches?gymId=${gymDetails.gymId}`)
-        // Filter out the branch currently showing (if we are looking at a public branch detail)
-        const filtered = response.data.filter((b: any) => b._id !== gymDetails.branchId)
-        setBranches(filtered)
+        setBranches(response.data)
       } catch (err) {
         console.error('Failed to fetch gym branches:', err)
       }
@@ -94,6 +92,28 @@ const GymDetails = () => {
     if (email) {
       Linking.openURL(`mailto:${email}`)
     }
+  }
+
+  const handleLeaveGym = async () => {
+    Alert.alert(
+      'Leave Gym',
+      'Are you sure you want to terminate your enrollment at this gym? You will lose access to active plans and logs synchronization.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Leave',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await apiClient.post('/gym/leave')
+              fetchGymDetails()
+            } catch (err: any) {
+              Alert.alert('Error', err.response?.data?.message || 'Failed to leave gym')
+            }
+          }
+        }
+      ]
+    )
   }
 
   // Format joined date
@@ -184,7 +204,7 @@ const GymDetails = () => {
 
               {/* Status Indicator */}
               <View
-                className="py-1 px-2.5 rounded-full"
+                className="py-1 px-2.5 rounded-full mt-2"
                 style={{ backgroundColor: gymDetails.status === 'active' ? '#10B98122' : '#EF444422' }}
               >
                 <Text
@@ -321,6 +341,15 @@ const GymDetails = () => {
                 </Text>
               </View>
             </View>
+
+            {/* LEAVE GYM BUTTON */}
+            <TouchableOpacity
+              className="w-full flex-row items-center justify-center py-3.5 rounded-xl bg-red-950/20 border border-red-900/50 mb-8"
+              onPress={handleLeaveGym}
+            >
+              <Ionicons name="exit-outline" size={16} color="#EF4444" style={{ marginRight: 8 }} />
+              <Text className="text-red-500 font-extrabold text-[14px]">Leave Enrolled Gym</Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       ) : (
