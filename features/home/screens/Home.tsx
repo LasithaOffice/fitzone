@@ -1,6 +1,7 @@
-import { ScrollView, View, ActivityIndicator } from 'react-native'
-import React, { useEffect } from 'react'
+import { ScrollView, View, ActivityIndicator, TouchableOpacity, Text } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { router } from 'expo-router'
 import Header from '../components/Home/Header'
 import WeeklyUpdate from '../components/Home/WeeklyUpdate'
 import MainMenu from '../components/Home/MainMenu'
@@ -10,11 +11,14 @@ import GymNetwork from '../components/Home/GymNetwork'
 import { useAppDispatch, useAppSelector } from '@/store'
 import { fetchPlan } from '@/store/planSlice'
 import { PRIMARY } from '@/constants/colors'
+import apiClient from '@/lib/apiClient'
+import { Ionicons } from '@expo/vector-icons'
 
 const Home = () => {
   const dispatch = useAppDispatch()
   const auth = useAppSelector((state) => state.auth)
   const { loading, workoutPlan } = useAppSelector((state) => state.plan)
+
 
   useEffect(() => {
     // Construct the UserProfile for plan generation
@@ -59,7 +63,7 @@ const Home = () => {
         <ScrollView
           className="flex-1"
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 40 }}
+          contentContainerStyle={{ paddingBottom: 20 }}
         >
           <WeeklyUpdate />
           <MainMenu />
@@ -68,6 +72,7 @@ const Home = () => {
           <GymNetwork />
         </ScrollView>
       )}
+
     </SafeAreaView>
   )
 }

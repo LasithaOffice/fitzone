@@ -48,6 +48,12 @@ export default function Screen() {
     return '/(auth)/join5';
   };
 
+
+  /**
+   * npx expo prebuild --clean      
+   * npx expo run:android    
+   */
+
   React.useEffect(() => {
     setColorScheme('dark');
 
@@ -89,8 +95,8 @@ export default function Screen() {
           }
 
           // Check if onboarding was completed
-          const isOnboardingComplete = 
-            userProfile.workoutFrequency || 
+          const isOnboardingComplete =
+            userProfile.workoutFrequency ||
             (userProfile.workoutPlan && userProfile.workoutPlan.length > 0);
 
           if (isOnboardingComplete) {

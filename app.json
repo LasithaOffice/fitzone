@@ -59,7 +59,14 @@
         }
       ],
       "@react-native-community/datetimepicker",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "react-native-maps",
+        {
+          "iosGoogleMapsApiKey": "[GCP_API_KEY]",
+          "androidGoogleMapsApiKey": "[GCP_API_KEY]"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

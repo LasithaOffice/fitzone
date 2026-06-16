@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import apiClient from '@/lib/apiClient';
 
 export interface AuthState {
+  email: string;
   fullName: string;
   birthday: string;
   gender: string;
@@ -27,7 +28,7 @@ export interface AuthState {
 }
 
 const initialState: AuthState = {
-
+  email: 'lasitha@example.com',
   fullName: 'Lasitha Lakmal',
   birthday: '1993-10-03',
   gender: 'male',
@@ -206,6 +207,7 @@ const authSlice = createSlice({
     setUserProfile: (state, action: PayloadAction<any>) => {
       const u = action.payload;
       if (u) {
+        state.email = u.email || '';
         state.fullName = u.fullName || '';
         state.birthday = u.birthday || '';
         state.gender = u.gender || 'male';
@@ -258,6 +260,7 @@ const authSlice = createSlice({
         state.registrationSuccess = true;
         state.error = null;
         if (action.payload?.user) {
+          state.email = action.payload.user.email || '';
           state.fitnessLevel = action.payload.user.fitnessLevel;
           state.goal = action.payload.user.goal;
           state.allergies = action.payload.user.allergies || [];

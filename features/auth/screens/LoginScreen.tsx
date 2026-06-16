@@ -28,6 +28,8 @@ const LoginScreen = () => {
   }, [])
 
   const [googleSignIn, setGoogleSignIn] = useState(false);
+  const [appleSignIn, setAppleSignIn] = useState(false);
+
 
   async function onGoogleButtonPress() {
     setGoogleSignIn(true);
@@ -52,7 +54,7 @@ const LoginScreen = () => {
 
       // Sign-in the user with the credential
       const data = await signInWithCredential(getAuth(), googleCredential);
-      
+
       const email = data.user?.email;
       const createdAt = new Date().toISOString();
       const socialProvider = 'google';
@@ -87,8 +89,8 @@ const LoginScreen = () => {
           }));
         }
 
-        const isOnboardingComplete = 
-          loggedInUser.workoutFrequency || 
+        const isOnboardingComplete =
+          loggedInUser.workoutFrequency ||
           (loggedInUser.workoutPlan && loggedInUser.workoutPlan.length > 0);
 
         if (isOnboardingComplete) {
@@ -148,7 +150,7 @@ const LoginScreen = () => {
 
           }} >
             {
-              (googleSignIn) ?
+              (appleSignIn) ?
                 <>
                   <ActivityIndicator color={'white'} />
                 </>
