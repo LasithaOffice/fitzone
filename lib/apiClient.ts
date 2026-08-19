@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
+import { router } from 'expo-router';
 import * as tokenStore from './tokenStore';
 
 const API_BASE_URL = Platform.OS === 'android'
@@ -70,6 +71,7 @@ apiClient.interceptors.response.use(
       } catch (refreshError) {
         console.error('Refresh token cycle failed. Clearing tokens.', refreshError);
         await tokenStore.clearTokens();
+        router.replace('/(auth)/login');
         return Promise.reject(refreshError);
       }
     }

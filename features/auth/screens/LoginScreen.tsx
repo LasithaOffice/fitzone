@@ -1,4 +1,4 @@
-import { View, ImageBackground, StyleSheet, ActivityIndicator } from 'react-native'
+import { View, ImageBackground, StyleSheet, ActivityIndicator, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import ViewBox from '@/components/wrappers/ViewBox'
 import { Button } from '@/components/ui/button'
@@ -62,37 +62,30 @@ const LoginScreen = () => {
 
       console.log('Sending social login data to backend:', { email, createdAt, socialProvider });
 
-      let loggedInUser = null;
-      try {
-        const response = await apiClient.post('/auth/social-login', {
-          email,
-          createdAt,
-          socialProvider
-        });
-        const { accessToken, refreshToken, user } = response.data;
-        await tokenStore.setTokens(accessToken, refreshToken);
-        loggedInUser = user;
-      } catch (apiError: any) {
-        console.warn('Network error or API offline. Simulating local token storage:', apiError.message);
-        await tokenStore.setTokens('mock-access-token', 'mock-refresh-token');
-      }
+      const response = await apiClient.post('/auth/social-login', {
+        email,
+        createdAt,
+        socialProvider
+      });
+      const { accessToken, refreshToken, user } = response.data;
+      await tokenStore.setTokens(accessToken, refreshToken);
 
       setGoogleSignIn(false);
 
-      if (loggedInUser) {
-        dispatch(setUserProfile(loggedInUser));
+      if (user) {
+        dispatch(setUserProfile(user));
 
-        if (loggedInUser.workoutPlan && loggedInUser.workoutPlan.length > 0) {
+        if (user.workoutPlan && user.workoutPlan.length > 0) {
           dispatch(setPlan({
-            mlOutputs: loggedInUser.mlOutputs,
-            workoutPlan: loggedInUser.workoutPlan,
-            mealPlan: loggedInUser.mealPlan,
+            mlOutputs: user.mlOutputs,
+            workoutPlan: user.workoutPlan,
+            mealPlan: user.mealPlan,
           }));
         }
 
         const isOnboardingComplete =
-          loggedInUser.workoutFrequency ||
-          (loggedInUser.workoutPlan && loggedInUser.workoutPlan.length > 0);
+          user.workoutFrequency ||
+          (user.workoutPlan && user.workoutPlan.length > 0);
 
         if (isOnboardingComplete) {
           console.log('User logged in. Onboarding completed. Routing to tabs.');
@@ -100,16 +93,16 @@ const LoginScreen = () => {
           await clearLocalOnboardingState();
           router.replace('/(tabs)');
         } else {
-          const nextRoute = determineNextOnboardingRoute(loggedInUser);
+          const nextRoute = determineNextOnboardingRoute(user);
           console.log('User logged in. Onboarding incomplete. Routing to:', nextRoute);
           router.replace(nextRoute as any);
         }
-      } else {
-        router.replace('/(auth)/join1');
       }
     } catch (err: any) {
       console.error('Google Sign-In failed:', err);
       setGoogleSignIn(false);
+      const serverMessage = err.response?.data?.message || err.message || 'Google Sign-In failed';
+      Alert.alert('Login Error', serverMessage);
     }
   }
 

@@ -76,7 +76,13 @@ export default function Screen() {
           userProfile = profileResponse.data;
           console.log('User profile fetched successfully:', userProfile);
         } catch (apiError: any) {
-          console.warn('API connection failed. Running in offline/fallback mode:', apiError.message);
+          console.warn('API connection failed:', apiError.message);
+          if (apiError.response?.status === 401 || apiError.response?.status === 403) {
+            console.log('Session expired or unauthorized. Redirecting to login.');
+            await tokenStore.clearTokens();
+            router.replace('/(auth)/login');
+            return;
+          }
         }
 
         if (userProfile) {
