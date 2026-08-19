@@ -37,6 +37,7 @@ const LoginScreen = () => {
       // Check if your device supports Google Play
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
       // Get the users ID token
+      GoogleSignin.signOut();
       const signInResult: any = await GoogleSignin.signIn();
 
       // Try the new style of google-sign in result, from v13+ of that module
