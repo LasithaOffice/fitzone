@@ -18,7 +18,7 @@ const Profile = () => {
     dispatch(fetchUserProfileThunk())
   }, [dispatch])
   return (
-    <SafeAreaView className="flex-1 bg-black">
+    <SafeAreaView edges={['top']} className="flex-1 bg-black">
       <ProfileHeader />
       <ScrollView 
         className="flex-1"

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, ActivityIndicator, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import MapView, { Marker, Callout } from 'react-native-maps';
+import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { BACKGROUND_COLOR, COMP_BACKGROUND_COLOR, COMP_BORDER_COLOR, GRAY, PRIMARY } from '@/constants/colors';
 import apiClient from '@/lib/apiClient';
@@ -138,7 +138,7 @@ const GymMap = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView edges={['top']} style={styles.safeArea}>
       {/* NAVBAR HEADER */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
@@ -166,6 +166,7 @@ const GymMap = () => {
       ) : (
         <View style={styles.container}>
           <MapView
+            provider={PROVIDER_GOOGLE}
             ref={mapRef}
             style={styles.map}
             initialRegion={
@@ -185,10 +186,10 @@ const GymMap = () => {
               .filter((b) => b.latitude != null && b.longitude != null)
               .map((branch) => {
                 const isEnrolled = enrolledGym?.enrolled && enrolledGym?.gymEmail?.toLowerCase() === branch.gymId?.email?.toLowerCase();
-                
+
                 // Construct the marker image source
-                const imageSource = branch.gymId?.logoUrl 
-                  ? { uri: branch.gymId.logoUrl } 
+                const imageSource = branch.gymId?.logoUrl
+                  ? { uri: branch.gymId.logoUrl }
                   : { uri: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=200&auto=format&fit=crop' };
 
                 return (

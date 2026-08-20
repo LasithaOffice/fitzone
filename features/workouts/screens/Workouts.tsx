@@ -97,7 +97,7 @@ const Workouts = () => {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-black" style={{ backgroundColor: BACKGROUND_COLOR }}>
+    <SafeAreaView edges={['top']} className="flex-1 bg-black" style={{ backgroundColor: BACKGROUND_COLOR }}>
       {/* Top Header */}
       <View className="px-4 py-3 flex-row justify-between items-center border-b" style={{ borderColor: COMP_BORDER_COLOR }}>
         <Text className="text-xl font-bold text-white">Workout Plan</Text>
@@ -146,7 +146,7 @@ const Workouts = () => {
         </ScrollView>
       </View>
 
-      <ScrollView className="flex-1 px-4 py-4" showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1 px-4 py-4" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 32 }}>
         {isRestDay ? (
           /* Rest Day Component */
           <View className="py-12 items-center justify-center bg-zinc-950 rounded-2xl border" style={{ borderColor: COMP_BORDER_COLOR }}>

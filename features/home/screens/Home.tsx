@@ -50,7 +50,7 @@ const Home = () => {
   }, [dispatch, auth]);
 
   return (
-    <SafeAreaView className='bg-black flex-1'>
+    <SafeAreaView edges={['top']} className="bg-black flex-1">
       <Header />
       {loading && workoutPlan.length === 0 ? (
         <View className="flex-1 justify-center items-center">
@@ -60,7 +60,7 @@ const Home = () => {
         <ScrollView
           className="flex-1"
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 20 }}
+          contentContainerStyle={{ paddingBottom: 32 }}
         >
           <WeeklyUpdate />
           <MainMenu />
